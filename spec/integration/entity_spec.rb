@@ -13,7 +13,7 @@ describe 'entity mapping' do
 
     # (1) Optionally extend the builtin attribute processors
 
-    processors = Mom::Entity::PROCESSORS.merge(
+    processors = Mom::PROCESSORS.merge(
 
       Gender: ->(_) {
         s(:guard,
@@ -27,7 +27,7 @@ describe 'entity mapping' do
     # (2) Define a new registry of entity definitions
 
     options  = {key_transform: :symbolize}
-    registry = Mom::Entity::Definition::Registry.build(options) do
+    registry = Mom::Definition::Registry.build(options) do
 
       register(:contact) do
         map :email, :String, from: :email_address
@@ -95,7 +95,7 @@ describe 'entity mapping' do
 
     begin
       expect(morpher.call(id: 1)[:id]).to be(1)
-    rescue Mom::Entity::Morpher::TransformError => e
+    rescue Mom::Morpher::TransformError => e
       puts e.message
     end
 
@@ -104,7 +104,7 @@ describe 'entity mapping' do
 
     begin
       expect(morpher.call('ID' => 1)[:id]).to be(1)
-    rescue Mom::Entity::Morpher::TransformError => e
+    rescue Mom::Morpher::TransformError => e
       puts e.message
     end
 
@@ -128,7 +128,7 @@ describe 'entity mapping' do
     begin
       expect(morpher.call({           })[:page]).to be(1)
       expect(morpher.call('page' => '2')[:page]).to be(2)
-    rescue Mom::Entity::Morpher::TransformError => e
+    rescue Mom::Morpher::TransformError => e
       puts e.message
     end
 
@@ -157,7 +157,7 @@ describe 'entity mapping' do
     begin
       expect(morpher.call({           }).page).to be(1)
       expect(morpher.call('page' => '2').page).to be(2)
-    rescue Mom::Entity::Morpher::TransformError => e
+    rescue Mom::Morpher::TransformError => e
       puts e.message
     end
 
@@ -279,7 +279,7 @@ describe 'entity mapping' do
 
       begin
         person = entity.load(something: :bad)
-      rescue Mom::Entity::Morpher::TransformError => e
+      rescue Mom::Morpher::TransformError => e
         puts e.message
       end
 
@@ -287,7 +287,7 @@ describe 'entity mapping' do
 
       begin
         person = entity.dump(Anima.build(:id).new(id: 1))
-      rescue Mom::Entity::Morpher::TransformError => e
+      rescue Mom::Morpher::TransformError => e
         puts e.message
       end
 
