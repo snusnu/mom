@@ -17,10 +17,10 @@ module Mom
           end # InvalidOptions
 
           class InternalError < StandardError
-            include Concord.new(:options)
+            include Concord.new(:source, :options)
 
             def message
-              "BUG in #{self.class}: #{options.inspect}"
+              "BUG in #{source.class.name}: #{options.inspect}"
             end
           end # InternalError
 
@@ -100,7 +100,7 @@ module Mom
             elsif @configured_processor
               args.last.merge(processor: args.first)
             else
-              raise InternalError.new(args)
+              raise InternalError.new(self, args)
             end
           end
         end # OptionBuilder
