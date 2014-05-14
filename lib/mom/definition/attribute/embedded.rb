@@ -15,10 +15,10 @@ module Mom
         private
 
         def local_options
-          {entity: name, base: base_name}
+          {entity: name, prefix: name_prefix}
         end
 
-        def base_name
+        def name_prefix
           name
         end
       end # OptionBuilder
@@ -59,7 +59,7 @@ module Mom
         class OptionBuilder < Attribute::OptionBuilder
           private
 
-          def base_name
+          def name_prefix
             Inflecto.singularize(super.to_s).to_sym
           end
         end

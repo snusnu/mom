@@ -33,7 +33,7 @@ module Mom
             super
 
             @name_generator       = default_options.fetch(:name_generator)
-            @base_name            = default_options.fetch(:base)
+            @name_prefix          = default_options.fetch(:prefix)
             @default_primitive    = default_primitive?
             @configured_primitive = configured_primitive?
             @referenced_processor = referenced_processor?
@@ -87,7 +87,7 @@ module Mom
           end
 
           def from_name
-            @name_generator.call(@base_name, name)
+            @name_generator.call(@name_prefix, name)
           end
 
           def options

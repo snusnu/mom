@@ -10,7 +10,7 @@ module Mom
     public :default_options
 
     def self.build(entity_name, default_options = EMPTY_HASH, header = EMPTY_ARRAY, &block)
-      instance = new(entity_name, {base: entity_name}.merge(default_options), header)
+      instance = new(entity_name, {prefix: entity_name}.merge(default_options), header)
       instance.instance_eval(&block) if block
       instance
     end

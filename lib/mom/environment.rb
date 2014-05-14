@@ -59,11 +59,11 @@ module Mom
       self
     end
 
-    def hash_transformer(name = :anonymous, default_options = {base: name}, &block)
+    def hash_transformer(name = :anonymous, default_options = {prefix: name}, &block)
       Morpher.hash_transformer(definition(name, default_options, &block), self)
     end
 
-    def object_mapper(name = :anonymous, default_options = {base: name}, &block)
+    def object_mapper(name = :anonymous, default_options = {prefix: name}, &block)
       Morpher.object_mapper(definition(name, default_options, &block), self)
     end
 
