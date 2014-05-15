@@ -19,18 +19,8 @@ module Mom
         builder.call(self, environment, entity_builder_name)
       end
 
-      def processor
-        options.fetch(:processor, :Noop)
-      end
-      memoize :processor
-
-      def default_value
-        options.fetch(:default, Undefined)
-      end
-      memoize :default_value
-
       def default_value?
-        !default_value.equal?(Undefined)
+        primitive? && !default_value.equal?(Undefined)
       end
 
       def old_key

@@ -16,9 +16,7 @@ module Mom
 
         def initialize(*)
           super
-          @processor   = attribute.processor
-          @options     = attribute.options
-          @definitions = environment.definitions
+          @options = attribute.options
         end
 
         def call
@@ -27,9 +25,7 @@ module Mom
 
         private
 
-        attr_reader :processor
         attr_reader :options
-        attr_reader :definitions
 
       end # Attribute
     end # Builder

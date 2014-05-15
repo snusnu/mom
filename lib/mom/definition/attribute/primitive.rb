@@ -49,6 +49,7 @@ module Mom
             @default_options.
               reject { |k,_| k == :name_generator }.
               merge!(from: from_name).
+              merge!(default: Undefined).
               merge!(options)
           end
 
@@ -94,7 +95,7 @@ module Mom
             if @default_primitive
               NULL_PROCESSOR
             elsif @configured_primitive
-              args.first
+              args.first.merge(NULL_PROCESSOR)
             elsif @referenced_processor
               { processor: args.first }
             elsif @configured_processor
@@ -107,6 +108,16 @@ module Mom
 
         def self.build(name, default_options, args)
           new(name, OptionBuilder.call(name, default_options, args))
+        end
+
+        attr_reader :processor
+        attr_reader :default_value
+
+        def initialize(name, options)
+          super
+
+          @processor     = options.fetch(:processor)
+          @default_value = options.fetch(:default)
         end
 
         def primitive?

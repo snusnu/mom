@@ -9,7 +9,7 @@ module Mom
           private
 
           def node
-            environment.processor(processor, options)
+            environment.processor(attribute.processor, options)
           end
         end # Primitive
       end # Attribute

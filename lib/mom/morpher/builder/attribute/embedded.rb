@@ -19,11 +19,13 @@ module Mom
           def initialize(attribute, *args)
             super
             @entity_name = attribute.entity_name
+            @definitions = environment.definitions
           end
 
           private
 
           attr_reader :entity_name
+          attr_reader :definitions
 
           def node
             Builder::Entity.call(builder, definition, environment)
