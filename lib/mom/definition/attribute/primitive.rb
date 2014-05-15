@@ -8,101 +8,80 @@ module Mom
 
         class OptionBuilder
 
-          class InvalidOptions < StandardError
-            include Concord.new(:options)
+          HANDLERS       = {}
+          NULL_PROCESSOR = { processor: :Noop }
 
-            def message
-              "options not recognized: #{options.inspect}"
+          def self.handle(&test)
+            HANDLERS[self] = test
+          end
+
+          class Unconstrained < self
+            handle { |args| args.size == 0 }
+
+            private
+
+            def options
+              NULL_PROCESSOR
             end
-          end # InvalidOptions
 
-          class InternalError < StandardError
-            include Concord.new(:source, :options)
+            class Configured < self
+              handle { |args| args.size == 1 && args.first.is_a?(Hash) }
 
-            def message
-              "BUG in #{source.class.name}: #{options.inspect}"
+              private
+
+              def options
+                args.first.merge(super)
+              end
+            end # Configured
+          end # Unconstrained
+
+          class Constrained < self
+            handle { |args| args.size == 1 && args.first.is_a?(Symbol) }
+
+            private
+
+            def options
+              { processor: args.first }
             end
-          end # InternalError
+
+            class Configured < self
+              handle { |args| args.size == 2 && args.last.is_a?(Hash) }
+
+              private
+
+              def options
+                args.last.merge(super)
+              end
+            end # Configured
+          end # Constrained
 
           include Concord.new(:name, :default_options, :args)
-          include Procto.call
 
-          NULL_PROCESSOR = { processor: :Noop }
+          def self.call(name, default_options, args)
+            handler = HANDLERS.select { |_, test| test.call(args) }.keys.first
+            raise ArgumentError.new("Invalid options: #{args}") unless handler
+            handler.new(name, default_options, args).call
+          end
 
           def initialize(name, default_options, args)
             super
 
-            @name_generator       = default_options.fetch(:name_generator)
-            @name_prefix          = default_options.fetch(:prefix)
-            @default_primitive    = default_primitive?
-            @configured_primitive = configured_primitive?
-            @referenced_processor = referenced_processor?
-            @configured_processor = configured_processor?
-
-            @primitive = primitive?
-            @processed = processed?
-
-            assert_valid_options
+            @name_generator = default_options.fetch(:name_generator)
+            @name_prefix    = default_options.fetch(:prefix)
           end
 
           def call
-            @default_options.
+            default_options.
               reject { |k,_| k == :name_generator }.
-              merge!(from: from_name).
+              merge!(from: from).
               merge!(default: Undefined).
               merge!(options)
           end
 
           private
 
-          def assert_valid_options
-            raise InvalidOptions.new(args) unless valid?
-          end
-
-          def valid?
-            @primitive || @processed
-          end
-
-          def primitive?
-            @default_primitive || @configured_primitive
-          end
-
-          def processed?
-            @referenced_processor || @configured_processor
-          end
-
-          def default_primitive?
-            args.length == 0
-          end
-
-          def configured_primitive?
-            args.length == 1 && args.first.is_a?(Hash)
-          end
-
-          def referenced_processor?
-            args.length == 1 && args.first.is_a?(Symbol)
-          end
-
-          def configured_processor?
-            args.length == 2 && args.first.is_a?(Symbol) && args.last.is_a?(Hash)
-          end
-
-          def from_name
+          def from
             @name_generator.call(@name_prefix, name)
-          end
-
-          def options
-            if @default_primitive
-              NULL_PROCESSOR
-            elsif @configured_primitive
-              args.first.merge(NULL_PROCESSOR)
-            elsif @referenced_processor
-              { processor: args.first }
-            elsif @configured_processor
-              args.last.merge(processor: args.first)
-            else
-              raise InternalError.new(self, args)
-            end
           end
         end # OptionBuilder
 
