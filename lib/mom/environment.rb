@@ -24,13 +24,22 @@ module Mom
     IntArray:         ->(_) { s(:map, s(:guard, s(:is_a,      Integer))) },
     StringArray:      ->(_) { s(:map, s(:guard, s(:primitive, String))) },
 
-    OIntArray:        ->(_) {
+    OIntArray: ->(_) {
       s(:block,
         s(:guard,
           s(:or,
             s(:primitive, NilClass),
             s(:primitive, Array))),
         s(:map, s(:guard, s(:is_a, Integer))))
+    },
+
+    OStringArray: ->(_) {
+      s(:block,
+        s(:guard,
+          s(:or,
+            s(:primitive, NilClass),
+            s(:primitive, Array))),
+        s(:map, s(:guard, s(:primitive, String))))
     }
 
   }.freeze
