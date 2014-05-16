@@ -17,38 +17,38 @@ module Mom
         name_generator: ->(entity_name, attribute_name) { attribute_name }
       }.freeze
 
-      include Lupo.enumerable(:entries)
+      include Lupo.enumerable(:definitions)
 
       attr_reader :default_options
 
-      attr_reader :entries
-      private     :entries
+      attr_reader :definitions
+      private     :definitions
 
-      def self.build(default_options = DEFAULT_OPTIONS, entries = EMPTY_HASH, &block)
-        instance = new(DEFAULT_OPTIONS.merge(default_options), entries)
+      def self.build(default_options = DEFAULT_OPTIONS, definitions = EMPTY_HASH, &block)
+        instance = new(DEFAULT_OPTIONS.merge(default_options), definitions)
         instance.instance_eval(&block) if block
         instance
       end
 
-      def initialize(default_options = DEFAULT_OPTIONS, entries = EMPTY_HASH)
-        @default_options, @entries = default_options.dup, entries.dup
+      def initialize(default_options = DEFAULT_OPTIONS, definitions = EMPTY_HASH)
+        @default_options, @definitions = default_options.dup, definitions.dup
       end
 
       def register(name, options = EMPTY_HASH, &block)
-        if entries.key?(name)
+        if definitions.key?(name)
           fail(AlreadyRegistered.new(name))
         else
           definition_options = @default_options.merge(options)
-          entries[name] = Definition.build(name, definition_options, &block)
+          definitions[name] = Definition.build(name, definition_options, &block)
         end
       end
 
       def [](name)
-        entries.fetch(name)
+        definitions.fetch(name)
       end
 
       def include?(name)
-        entries.key?(name)
+        definitions.key?(name)
       end
 
       def models(builder_name)
