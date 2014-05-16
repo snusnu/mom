@@ -17,12 +17,10 @@ module Mom
         name_generator: ->(entity_name, attribute_name) { attribute_name }
       }.freeze
 
+      include Concord.new(:default_options, :definitions)
       include Lupo.enumerable(:definitions)
 
-      attr_reader :default_options
-
-      attr_reader :definitions
-      private     :definitions
+      public :default_options
 
       def self.build(default_options = DEFAULT_OPTIONS, definitions = EMPTY_HASH, &block)
         instance = new(DEFAULT_OPTIONS.merge(default_options), definitions)
@@ -31,7 +29,7 @@ module Mom
       end
 
       def initialize(default_options = DEFAULT_OPTIONS, definitions = EMPTY_HASH)
-        @default_options, @definitions = default_options.dup, definitions.dup
+        super(default_options.dup, definitions.dup)
       end
 
       def register(name, options = EMPTY_HASH, &block)
