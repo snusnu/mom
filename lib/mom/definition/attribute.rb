@@ -7,7 +7,6 @@ module Mom
 
       include AbstractType
       include Concord::Public.new(:name, :options)
-      include Adamantium::Flat
 
       abstract_method :builder
 
