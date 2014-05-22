@@ -17,13 +17,13 @@ if ENV['COVERAGE'] == 'true'
   end
 end
 
-require 'ramom'
+require 'mom'
 
 # MUST happen after ice_nine
 # got required by substation
 require 'devtools/spec_helper'
 
-include Ramom
+include Mom
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|

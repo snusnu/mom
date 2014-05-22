@@ -58,6 +58,20 @@ module Mom
       processors: PROCESSORS
     }.freeze
 
+    BUILD_OPTIONS = Definition::Registry::DEFAULT_OPTIONS.merge(
+      processors: PROCESSORS
+    ).freeze
+
+    def self.build(model_builder = :anima, options =  BUILD_OPTIONS, &block)
+      default_options = options.reject { |k,_| k == :processors }
+      definitions     = Definition::Registry.build(default_options, &block)
+      new(
+        definitions: definitions,
+        processors:  options.fetch(:processors),
+        models:      definitions.models(model_builder)
+      )
+    end
+
     def self.new(attributes)
       super(DEFAULTS.merge(attributes))
     end
