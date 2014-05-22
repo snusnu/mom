@@ -46,13 +46,13 @@ module Mom
 
   class Environment
 
-    include Enumerable
-
     include Anima.new(
       :definitions,
       :processors,
       :models
     )
+
+    include Lupo.enumerable(:definitions)
 
     DEFAULTS = {
       processors: PROCESSORS
@@ -74,12 +74,6 @@ module Mom
 
     def self.new(attributes)
       super(DEFAULTS.merge(attributes))
-    end
-
-    def each(&block)
-      return to_enum(__method__) unless block
-      definitions.each(&block)
-      self
     end
 
     def hash_transformer(name = :anonymous, default_options = {prefix: name}, &block)
