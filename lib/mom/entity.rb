@@ -3,6 +3,8 @@
 module Mom
   class Entity
 
+    DEFAULT_OPTIONS = Definition::Registry::DEFAULT_OPTIONS
+
     def self.registry(environment)
       Registry.new(environment.definitions.each_with_object({}) {
         |(name, definition), hash|
@@ -10,8 +12,8 @@ module Mom
       })
     end
 
-    def self.definition_registry(options = EMPTY_HASH)
-      Definition::Registry.new(options)
+    def self.definition_registry(options = DEFAULT_OPTIONS)
+      Definition::Registry.new(DEFAULT_OPTIONS.merge(options))
     end
 
     def self.build(definition, environment)
