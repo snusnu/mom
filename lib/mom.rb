@@ -24,6 +24,34 @@ module Mom
   # An empty frozen array
   EMPTY_ARRAY = [].freeze
 
+  def self.entity_registry(definitions, processors, model_builder = :anima)
+    Entity.registry(environment(definitions, processors, model_builder))
+  end
+
+  def self.hash_dressers(definitions, processors, model_builder = :anima)
+    each_definition(definitions, processors, model_builder) { |definition, env|
+      Morpher.hash_dresser(definition, env)
+    }
+  end
+
+  def self.object_mappers(definitions, processors, model_builder = :anima)
+    each_definition(definitions, processors, model_builder) { |definition, env|
+      Morpher.object_mapper(definition, env)
+    }
+  end
+
+  def self.environment(definitions, processors, model_builder = :anima)
+    definitions.environment(definitions.models(model_builder), processors)
+  end
+
+  def self.each_definition(definitions, processors, model_builder)
+    env = environment(definitions, processors, model_builder)
+    env.each_with_object({}) { |(name, definition), hash|
+      hash[name] = yield(definition, env)
+    }
+  end
+  private_class_method :each_definition
+
 end # Mom
 
 require 'mom/version'
