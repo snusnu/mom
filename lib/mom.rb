@@ -9,6 +9,8 @@ require 'adamantium'
 require 'abstract_type'
 require 'inflecto'
 
+require 'mom/processors'
+
 # Morpher object mapper
 module Mom
 
@@ -28,17 +30,17 @@ module Mom
     Inflecto.singularize(word.to_s).to_sym
   end
 
-  def self.entity_registry(definitions, processors, model_builder = :anima)
+  def self.entity_registry(definitions, processors = PROCESSORS, model_builder = :anima)
     Entity.registry(environment(definitions, processors, model_builder))
   end
 
-  def self.hash_dressers(definitions, processors, model_builder = :anima)
+  def self.hash_dressers(definitions, processors = PROCESSORS, model_builder = :anima)
     each_definition(definitions, processors, model_builder) { |definition, env|
       Morpher.hash_dresser(definition, env)
     }
   end
 
-  def self.object_mappers(definitions, processors, model_builder = :anima)
+  def self.object_mappers(definitions, processors = PROCESSORS, model_builder = :anima)
     each_definition(definitions, processors, model_builder) { |definition, env|
       Morpher.object_mapper(definition, env)
     }
