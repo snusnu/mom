@@ -50,7 +50,7 @@ describe 'entity mapping' do
         map :name,   :String
         map :gender, :Gender
 
-        wrap :contact, from: :profile
+        wrap :contact, entity: :contact, from: :profile
 
         wrap :account do
           map :login,    :String

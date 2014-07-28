@@ -41,7 +41,7 @@ module Mom
         end
 
         def entity_name
-          embed? ? options.fetch(:entity, name) : referenced_name
+          options.fetch(:entity, referenced_name)
         end
 
         private
@@ -60,14 +60,14 @@ module Mom
           private
 
           def name_prefix
-            Inflecto.singularize(super.to_s).to_sym
+            Mom.singularize(super)
           end
         end
 
         private
 
         def referenced_name
-          Inflecto.singularize(name.to_s).to_sym
+          Mom.singularize(super)
         end
 
         def builder

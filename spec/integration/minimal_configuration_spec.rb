@@ -6,7 +6,7 @@ entities = Mom::Registry.build do # build models using :anima
   register :user do
     map :id
     map :name
-    group :tasks
+    group :tasks, entity: :task
   end
 
   register :task do

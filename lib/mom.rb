@@ -24,6 +24,10 @@ module Mom
   # An empty frozen array
   EMPTY_ARRAY = [].freeze
 
+  def self.singularize(word)
+    Inflecto.singularize(word.to_s).to_sym
+  end
+
   def self.entity_registry(definitions, processors, model_builder = :anima)
     Entity.registry(environment(definitions, processors, model_builder))
   end

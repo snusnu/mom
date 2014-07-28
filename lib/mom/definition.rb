@@ -60,11 +60,11 @@ module Mom
     private
 
     def wrap_options(name, options)
-      options.merge(entity: :"#{entity_name}.#{name}")
+      { entity: :"#{entity_name}.#{name}" }.merge(options)
     end
 
     def group_options(name, options)
-      options.merge(entity: :"#{entity_name}.#{Inflecto.singularize(name.to_s)}")
+      { entity: :"#{entity_name}.#{Inflecto.singularize(name.to_s)}" }.merge(options)
     end
 
   end # Definition
