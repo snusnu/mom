@@ -30,6 +30,10 @@ module Mom
     Inflecto.singularize(word.to_s).to_sym
   end
 
+  def self.definition_registry(options = Definition::Registry::DEFAULT_OPTIONS, definitions = EMPTY_HASH, &block)
+    Definition::Registry.build(options, definitions, &block)
+  end
+
   def self.entity_registry(definitions, processors = PROCESSORS, model_builder = :anima)
     Entity.registry(environment(definitions, processors, model_builder))
   end
