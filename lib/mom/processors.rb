@@ -23,6 +23,8 @@ module Mom
     IntArray:         ->(_) { s(:map, s(:guard, s(:is_a,      Integer))) },
     StringArray:      ->(_) { s(:map, s(:guard, s(:primitive, String))) },
 
+    ParsedIso8601DateTime: ->(_) { s(:parse_iso8601_date_time, 0) },
+
     OIntArray: ->(_) {
       s(:block,
         s(:guard,
