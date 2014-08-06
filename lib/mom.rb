@@ -38,9 +38,9 @@ module Mom
     Entity.registry(environment(definitions, processors, model_builder))
   end
 
-  def self.hash_dressers(definitions, processors = PROCESSORS, model_builder = :anima)
+  def self.hash_transformers(definitions, processors = PROCESSORS, model_builder = :anima)
     each_definition(definitions, processors, model_builder) { |definition, env|
-      Morpher.hash_dresser(definition, env)
+      Morpher.hash_transformer(definition, env)
     }
   end
 
