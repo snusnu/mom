@@ -28,7 +28,7 @@ module Mom
           attr_reader :definitions
 
           def node
-            Builder::Entity.call(builder, definition, environment)
+            Builder.call(builder, definition, environment)
           end
 
           class Embedded < self

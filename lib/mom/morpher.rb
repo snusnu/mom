@@ -23,7 +23,7 @@ module Mom
     end
 
     def self.transformer(name, definition, environment)
-      compile(Builder::Entity.call(name, definition, environment))
+      compile(Builder.call(name, definition, environment))
     end
 
     def self.compile(node)
