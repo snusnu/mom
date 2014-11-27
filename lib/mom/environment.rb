@@ -31,10 +31,12 @@ module Mom
       super(DEFAULTS.merge(attributes))
     end
 
-    def registry
-      Registry.new(each_with_object({}) { |(name, definition), h|
-        h[name] = yield(definition, self)
-      })
+    def hash_transformers
+      registry { |definition, env| Morpher.hash_transformer(definition, env) }
+    end
+
+    def object_mappers
+      registry { |definition, env| Morpher.object_mapper(definition, env) }
     end
 
     def hash_transformer(name = :anonymous, options = {prefix: name}, &block)
@@ -43,10 +45,6 @@ module Mom
 
     def object_mapper(name = :anonymous, options = {prefix: name}, &block)
       Morpher.object_mapper(definition(name, options, &block), self)
-    end
-
-    def mapper(name)
-      Mapper.build(definitions[name], self)
     end
 
     def processor(name, options)
@@ -71,6 +69,12 @@ module Mom
       return definitions[entity_name] if definitions.include?(entity_name)
 
       definitions.definition(entity_name, options, &block)
+    end
+
+    def registry
+      Registry.new(each_with_object({}) { |(name, definition), h|
+        h[name] = yield(definition, self)
+      })
     end
 
   end # Environment

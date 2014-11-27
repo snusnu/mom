@@ -35,15 +35,11 @@ module Mom
   end
 
   def self.hash_transformers(definitions, processors = PROCESSORS, model_builder = :anima)
-    environment(definitions, processors, model_builder).registry { |definition, env|
-      Morpher.hash_transformer(definition, env)
-    }
+    environment(definitions, processors, model_builder).hash_transformers
   end
 
   def self.object_mappers(definitions, processors = PROCESSORS, model_builder = :anima)
-    environment(definitions, processors, model_builder).registry { |definition, env|
-      Morpher.object_mapper(definition, env)
-    }
+    environment(definitions, processors, model_builder).object_mappers
   end
 
   def self.environment(definitions, processors, model_builder = :anima)
