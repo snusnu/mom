@@ -39,11 +39,11 @@ module Mom
       registry { |definition, env| Morpher.object_mapper(definition, env) }
     end
 
-    def hash_transformer(name = :anonymous, options = {prefix: name}, &block)
+    def hash_transformer(name = EMPTY_STRING, options = {prefix: name}, &block)
       Morpher.hash_transformer(definition(name, options, &block), self)
     end
 
-    def object_mapper(name = :anonymous, options = {prefix: name}, &block)
+    def object_mapper(name = EMPTY_STRING, options = {prefix: name}, &block)
       Morpher.object_mapper(definition(name, options, &block), self)
     end
 
@@ -66,8 +66,6 @@ module Mom
     private
 
     def definition(entity_name, options, &block)
-      return definitions[entity_name] if definitions.include?(entity_name)
-
       definitions.definition(entity_name, options, &block)
     end
 
