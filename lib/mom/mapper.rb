@@ -3,7 +3,7 @@
 module Mom
 
   def self.mappers(definitions, processors = PROCESSORS, model_builder = :anima)
-    each_definition(definitions, processors, model_builder) { |definition, env|
+    environment(definitions, processors, model_builder).registry { |definition, env|
       Mapper.build(definition, env)
     }
   end

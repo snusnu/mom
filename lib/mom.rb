@@ -35,13 +35,13 @@ module Mom
   end
 
   def self.hash_transformers(definitions, processors = PROCESSORS, model_builder = :anima)
-    each_definition(definitions, processors, model_builder) { |definition, env|
+    environment(definitions, processors, model_builder).registry { |definition, env|
       Morpher.hash_transformer(definition, env)
     }
   end
 
   def self.object_mappers(definitions, processors = PROCESSORS, model_builder = :anima)
-    each_definition(definitions, processors, model_builder) { |definition, env|
+    environment(definitions, processors, model_builder).registry { |definition, env|
       Morpher.object_mapper(definition, env)
     }
   end
@@ -49,14 +49,6 @@ module Mom
   def self.environment(definitions, processors, model_builder = :anima)
     definitions.environment(definitions.models(model_builder), processors)
   end
-
-  def self.each_definition(definitions, processors, model_builder)
-    env = environment(definitions, processors, model_builder)
-    env.each_with_object({}) { |(name, definition), hash|
-      hash[name] = yield(definition, env)
-    }
-  end
-  private_class_method :each_definition
 
 end # Mom
 

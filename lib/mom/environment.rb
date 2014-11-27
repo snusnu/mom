@@ -33,6 +33,12 @@ module Mom
       super(DEFAULTS.merge(attributes))
     end
 
+    def registry
+      Registry.new(each_with_object({}) { |(name, definition), h|
+        h[name] = yield(definition, self)
+      })
+    end
+
     def hash_transformer(name = :anonymous, default_options = {prefix: name}, &block)
       Morpher.hash_transformer(definition(name, default_options, &block), self)
     end
