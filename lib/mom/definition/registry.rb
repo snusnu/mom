@@ -16,14 +16,15 @@ module Mom
 
       public :default_options
 
-      def self.build(default_options = DEFAULT_OPTIONS, definitions = EMPTY_HASH, &block)
+      def self.build(default_options = DEFAULT_OPTIONS, definitions = {}, &block)
         instance = new(DEFAULT_OPTIONS.merge(default_options), definitions)
         instance.instance_eval(&block) if block
         instance
       end
 
-      def initialize(default_options = DEFAULT_OPTIONS, definitions = EMPTY_HASH)
-        super(default_options.dup, definitions.dup)
+      # Mutates an optionally given definitions hash
+      def initialize(default_options = DEFAULT_OPTIONS, definitions = {})
+        super(default_options, definitions)
       end
 
       def register(name, options = EMPTY_HASH, &block)

@@ -30,7 +30,7 @@ module Mom
     Inflecto.singularize(word.to_s).to_sym
   end
 
-  def self.definition_registry(options = Definition::DEFAULT_OPTIONS, definitions = EMPTY_HASH, &block)
+  def self.definition_registry(options = Definition::DEFAULT_OPTIONS, definitions = {}, &block)
     Definition::Registry.build(options, definitions, &block)
   end
 
