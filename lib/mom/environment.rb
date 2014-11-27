@@ -17,7 +17,7 @@ module Mom
 
     BUILD_OPTIONS = Definition::DEFAULT_OPTIONS.merge(DEFAULTS).freeze
 
-    def self.build(model_builder = :anima, options =  BUILD_OPTIONS, &block)
+    def self.build(model_builder = :anima, options = BUILD_OPTIONS, &block)
       default_options = options.reject { |k,_| k == :processors }
       definitions     = Definition::Registry.build(default_options, &block)
       new(
