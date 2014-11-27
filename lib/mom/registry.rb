@@ -3,10 +3,10 @@
 module Mom
 
   class Registry
-    include Concord.new(:entries)
+    include Lupo.collection(:items)
 
     def [](name)
-      entries.fetch(name)
+      items.fetch(name)
     end
   end # Registry
 end # Mom
