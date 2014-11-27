@@ -21,7 +21,7 @@ module Mom
   class Mapper
 
     def self.build(definition, environment)
-      new(Morpher.object_mapper(definition, environment))
+      new(Morpher.transformer(:object, definition, environment))
     end
 
     attr_reader :loader

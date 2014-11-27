@@ -14,14 +14,6 @@ module Mom
 
     include Concord.new(:evaluator)
 
-    def self.hash_transformer(definition, environment)
-      transformer(:hash, definition, environment)
-    end
-
-    def self.object_mapper(definition, environment)
-      transformer(:object, definition, environment)
-    end
-
     def self.transformer(name, definition, environment)
       compile(Builder.call(name, definition, environment))
     end

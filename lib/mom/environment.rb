@@ -40,11 +40,11 @@ module Mom
     end
 
     def hash_transformer(name = EMPTY_STRING, options = {prefix: name}, &block)
-      Morpher.hash_transformer(definition(name, options, &block), self)
+      Morpher.transformer(:hash, definition(name, options, &block), self)
     end
 
     def object_mapper(name = EMPTY_STRING, options = {prefix: name}, &block)
-      Morpher.object_mapper(definition(name, options, &block), self)
+      Morpher.transformer(:object, definition(name, options, &block), self)
     end
 
     def processor(name, options)
