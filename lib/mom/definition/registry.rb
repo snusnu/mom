@@ -33,10 +33,13 @@ module Mom
       end
 
       def register(name, options = EMPTY_HASH, &block)
-        fail(AlreadyRegistered.new(name)) if definitions.key?(name)
+        fail(AlreadyRegistered.new(name)) if include?(name)
 
-        definition_options = default_options.merge(options)
-        definitions[name]  = Definition.build(name, definition_options, &block)
+        definitions[name] = definition(name, options, &block)
+      end
+
+      def definition(name, options = EMPTY_HASH, &block)
+        Definition.build(name, default_options.merge(options), &block)
       end
 
       def [](name)

@@ -70,8 +70,7 @@ module Mom
     def definition(entity_name, default_options, &block)
       return definitions[entity_name] if definitions.include?(entity_name)
 
-      options = definitions.default_options.merge(default_options)
-      Definition.build(entity_name, options, &block)
+      definitions.definition(entity_name, default_options, &block)
     end
 
   end # Environment
