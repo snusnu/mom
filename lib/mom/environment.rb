@@ -37,12 +37,12 @@ module Mom
       })
     end
 
-    def hash_transformer(name = :anonymous, default_options = {prefix: name}, &block)
-      Morpher.hash_transformer(definition(name, default_options, &block), self)
+    def hash_transformer(name = :anonymous, options = {prefix: name}, &block)
+      Morpher.hash_transformer(definition(name, options, &block), self)
     end
 
-    def object_mapper(name = :anonymous, default_options = {prefix: name}, &block)
-      Morpher.object_mapper(definition(name, default_options, &block), self)
+    def object_mapper(name = :anonymous, options = {prefix: name}, &block)
+      Morpher.object_mapper(definition(name, options, &block), self)
     end
 
     def mapper(name)
@@ -67,10 +67,10 @@ module Mom
 
     private
 
-    def definition(entity_name, default_options, &block)
+    def definition(entity_name, options, &block)
       return definitions[entity_name] if definitions.include?(entity_name)
 
-      definitions.definition(entity_name, default_options, &block)
+      definitions.definition(entity_name, options, &block)
     end
 
   end # Environment
