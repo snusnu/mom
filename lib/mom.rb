@@ -34,10 +34,6 @@ module Mom
     Definition::Registry.build(options, definitions, &block)
   end
 
-  def self.entity_registry(definitions, processors = PROCESSORS, model_builder = :anima)
-    Entity.registry(environment(definitions, processors, model_builder))
-  end
-
   def self.hash_transformers(definitions, processors = PROCESSORS, model_builder = :anima)
     each_definition(definitions, processors, model_builder) { |definition, env|
       Morpher.hash_transformer(definition, env)
@@ -78,7 +74,5 @@ require 'mom/morpher'
 require 'mom/model/registry'
 require 'mom/model/builder'
 require 'mom/model/builder/anima'
-require 'mom/mapper'
 require 'mom/environment'
 require 'mom/registry'
-require 'mom/entity'

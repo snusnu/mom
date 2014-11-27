@@ -218,9 +218,7 @@ describe 'entity mapping' do
 
     end
 
-    entities = Mom::Entity.registry(environment)
-
-    entity = entities[:person]
+    mapper = environment.mapper(:person)
 
     hash = {
       'name'            => 'snusnu',
@@ -253,7 +251,7 @@ describe 'entity mapping' do
     }
 
     # Expect it to roundtrip
-    expect(entity.dump(entity.load(hash))).to eql(hash)
+    expect(mapper.dump(mapper.load(hash))).to eql(hash)
 
     if ENV['LOG']
 
@@ -261,24 +259,24 @@ describe 'entity mapping' do
 
       puts
       puts "AST (loader):"
-      puts entity.mapper.loader.node.inspect
+      puts mapper.loader.node.inspect
 
-      person = entity.load(hash)
+      person = mapper.load(hash)
       puts 'person:'
       pp person
 
       puts
       puts "AST (dumper):"
-      puts entity.mapper.dumper.node.inspect
+      puts mapper.dumper.node.inspect
 
-      hash = entity.dump(person)
+      hash = mapper.dump(person)
       puts 'hash:'
       pp hash
 
       puts "\n------ With failing #load -------\n\n"
 
       begin
-        person = entity.load(something: :bad)
+        person = mapper.load(something: :bad)
       rescue Mom::Morpher::TransformError => e
         puts e.message
       end
@@ -286,7 +284,7 @@ describe 'entity mapping' do
       puts "\n------ With failing #dump -------\n\n"
 
       begin
-        person = entity.dump(Anima.build(:id).new(id: 1))
+        person = mapper.dump(Anima.build(:id).new(id: 1))
       rescue Mom::Morpher::TransformError => e
         puts e.message
       end

@@ -2,7 +2,9 @@
 
 require 'spec_helper'
 
-entities = Mom::Registry.build do # build models using :anima
+require 'mom/mapper'
+
+registry = Mom.definition_registry do # build models using :anima
   register :user do
     map :id
     map :name
@@ -15,18 +17,20 @@ entities = Mom::Registry.build do # build models using :anima
   end
 end
 
-entity = entities[:user]
+mappers = Mom.mappers(registry)
+
+mapper = mappers[:user]
 hash   = {id: 1, name: 'snusnu', tasks: [{id: 1, title: 'doit'}]}
 
-user_obj  = entity.load(hash)
-user_hash = entity.dump(user_obj)
+user_obj  = mapper.load(hash)
+user_hash = mapper.dump(user_obj)
 
 puts "loaded: #{user_obj.inspect}"
 puts "dumped: #{user_hash.inspect}"
 
 describe 'Minimal configuration usage' do
   it 'should support rountrips' do
-    expect(entity.dump(entity.load(hash))).to eql(hash)
+    expect(mapper.dump(mapper.load(hash))).to eql(hash)
   end
 end
 

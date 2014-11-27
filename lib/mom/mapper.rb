@@ -2,6 +2,12 @@
 
 module Mom
 
+  def self.mappers(definitions, processors = PROCESSORS, model_builder = :anima)
+    each_definition(definitions, processors, model_builder) { |definition, env|
+      Mapper.build(definition, env)
+    }
+  end
+
   class Mapper
 
     def self.build(definition, environment)
