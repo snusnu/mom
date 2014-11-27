@@ -11,12 +11,6 @@ module Mom
         end
       end # AlreadyRegistered
 
-      DEFAULT_OPTIONS = {
-        guard:          Hash,
-        key_transform: :neutral,
-        name_generator: ->(entity_name, attribute_name) { attribute_name }
-      }.freeze
-
       include Concord.new(:default_options, :definitions)
       include Lupo.enumerable(:definitions)
 

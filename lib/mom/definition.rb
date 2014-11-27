@@ -4,12 +4,18 @@ module Mom
 
   class Definition
 
+    DEFAULT_OPTIONS = {
+      guard:          Hash,
+      key_transform: :neutral,
+      name_generator: ->(entity_name, attribute_name) { attribute_name }
+    }.freeze
+
     include Concord.new(:entity_name, :default_options, :header)
 
     public :entity_name
     public :default_options
 
-    def self.build(entity_name, default_options = EMPTY_HASH, header = EMPTY_ARRAY, &block)
+    def self.build(entity_name, default_options = DEFAULT_OPTIONS, header = EMPTY_ARRAY, &block)
       instance = new(entity_name, {prefix: entity_name}.merge(default_options), header)
       instance.instance_eval(&block) if block
       instance
