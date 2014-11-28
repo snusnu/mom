@@ -4,6 +4,7 @@ require 'pp'
 require 'rspec'
 
 require 'mom'
+require 'mom/mapper'
 
 describe 'entity mapping' do
 
@@ -24,10 +25,21 @@ describe 'entity mapping' do
 
     )
 
-    # (2) Define a new registry of entity definitions
+    # (2) Create an environment for building models, morphers and mappers
 
-    options  = {key_transform: :symbolize}
-    registry = Mom::Definition::Registry.build(options) do
+    mom = Mom.environment(key_transform: :symbolize, processors: processors) do
+
+      register(:name) do
+        map :name
+      end
+
+      register(:id) do
+        map :id, from: 'ID'
+      end
+
+      register(:page) do
+        map :page, :ParsedInt10, default: '1'
+      end
 
       register(:contact) do
         map :email, :String, from: :email_address
@@ -71,117 +83,50 @@ describe 'entity mapping' do
       end
     end
 
-    # (3) Generate model classes for all entities using :anima builder
-
-    models = registry.models(:anima)
-
-    # (4) Create an environment for building models, morphers, mappers
-    #     and entities
-
-    environment = registry.environment(models, processors)
-
-
     # ----------------------------------------------------------------
 
-
-    if ENV['LOG']
-
-      puts "\n-------- WORKING WITH MORPHERS ----------\n\n"
-
-    end
+    hash_transformers = mom.hash_transformers
 
     # Test untyped mapping with no options
-    morpher = environment.hash_transformer { map :id }
+    morpher = hash_transformers[:name]
 
-    begin
-      expect(morpher.call(id: 1)[:id]).to be(1)
-    rescue Mom::Morpher::TransformError => e
-      puts e.message
-    end
+    expect(morpher.call('name' => 'snusnu')[:name]).to eq('snusnu')
 
-    # Test untyped mapping with options
-    morpher = environment.hash_transformer { map :id, from: 'ID' }
+    ## Test untyped mapping with options
+    morpher = hash_transformers[:id]
 
-    begin
-      expect(morpher.call('ID' => 1)[:id]).to be(1)
-    rescue Mom::Morpher::TransformError => e
-      puts e.message
-    end
+    expect(morpher.call('ID' => 1)[:id]).to be(1)
 
-    # Some use cases don't require the need to perform
-    # a roundtrip (thus needing a mapper). In fact, some
-    # transformations are not inversible, and thus don't
-    # support roundtrips in the first place. An example
-    # would be the s(:merge, {default: :value})) transformer.
-    #
-    # The example below illustrates a realworld usecase
-    # where a pagination (query) parameter may or may not
-    # be present, thus requiring a merge operation. It's no
-    # problem that this transformation is not inversible,
-    # since we don't need to transform the object back into
-    # a hash after working with it.
+    ## Some use cases don't require the need to perform
+    ## a roundtrip (thus needing a mapper). In fact, some
+    ## transformations are not inversible, and thus don't
+    ## support roundtrips in the first place. An example
+    ## would be the s(:merge, {default: :value})) transformer.
+    ##
+    ## The example below illustrates a realworld usecase
+    ## where a pagination (query) parameter may or may not
+    ## be present, thus requiring a merge operation. It's no
+    ## problem that this transformation is not inversible,
+    ## since we don't need to transform the object back into
+    ## a hash after working with it.
 
-    morpher = environment.hash_transformer do
-      map :page, :ParsedInt10, default: '1'
-    end
+    morpher = hash_transformers[:page]
 
-    begin
-      expect(morpher.call({           })[:page]).to be(1)
-      expect(morpher.call('page' => '2')[:page]).to be(2)
-    rescue Mom::Morpher::TransformError => e
-      puts e.message
-    end
+    expect(morpher.call({           })[:page]).to be(1)
+    expect(morpher.call('page' => '2')[:page]).to be(2)
 
-    if ENV['LOG']
+    # (3) Generate model classes for all entities using :anima builder
 
-      # Something to look at
+    models = mom.models(:anima)
 
-      puts
-      puts "AST:"
-      puts morpher.node.inspect
+    object_mappers = mom.object_mappers(models)
 
-      input  = {}
-      puts "input  = #{input.inspect}"
-      puts "output = #{morpher.call(input).inspect}"
+    morpher = object_mappers[:page]
 
-      input  = { 'page' => '2' }
-      puts "input  = #{input.inspect}"
-      puts "output = #{morpher.call(input).inspect}"
+    expect(morpher.call({           }).page).to be(1)
+    expect(morpher.call('page' => '2').page).to be(2)
 
-    end
-
-    morpher = environment.object_mapper(:page) do
-      map :page, :ParsedInt10, default: '1'
-    end
-
-    begin
-      expect(morpher.call({           }).page).to be(1)
-      expect(morpher.call('page' => '2').page).to be(2)
-    rescue Mom::Morpher::TransformError => e
-      puts e.message
-    end
-
-    if ENV['LOG']
-
-      # Something to look at
-
-      puts
-      puts "AST:"
-      puts morpher.node.inspect
-
-      input  = {}
-      puts "input  = #{input.inspect}"
-      puts "output = #{morpher.call(input).inspect}"
-
-      input  = { 'page' => '2' }
-      puts "input  = #{input.inspect}"
-      puts "output = #{morpher.call(input).inspect}"
-
-      puts "\n-------- WORKING WITH MAPPERS ----------\n\n"
-
-    end
-
-    mapper = environment.mapper(:task)
+    mapper = mom.mapper(:task, models)
 
     hash = {
       'name'          => 'test',
@@ -193,32 +138,10 @@ describe 'entity mapping' do
       'collaborators' => [ '1' ]
     }
 
-    puts
-    puts "AST (loader):"
-    puts mapper.loader.node.inspect
-
-    puts
-    puts "AST (dumper):"
-    puts mapper.dumper.node.inspect
-
     # Expect it to roundtrip
     expect(mapper.dump(mapper.load(hash))).to eql(hash)
 
-    if ENV['LOG']
-
-      # Something to look at
-
-      task = mapper.load(hash)
-      puts "task = #{task.inspect}"
-
-      hash = mapper.dump(task)
-      puts "hash = #{hash.inspect}"
-
-      puts "\n-------- WORKING WITH ENTITIES ---------\n\n"
-
-    end
-
-    mapper = environment.mapper(:person)
+    mapper = mom.mapper(:person, models)
 
     hash = {
       'name'            => 'snusnu',
@@ -252,43 +175,5 @@ describe 'entity mapping' do
 
     # Expect it to roundtrip
     expect(mapper.dump(mapper.load(hash))).to eql(hash)
-
-    if ENV['LOG']
-
-      # Something to look at
-
-      puts
-      puts "AST (loader):"
-      puts mapper.loader.node.inspect
-
-      person = mapper.load(hash)
-      puts 'person:'
-      pp person
-
-      puts
-      puts "AST (dumper):"
-      puts mapper.dumper.node.inspect
-
-      hash = mapper.dump(person)
-      puts 'hash:'
-      pp hash
-
-      puts "\n------ With failing #load -------\n\n"
-
-      begin
-        person = mapper.load(something: :bad)
-      rescue Mom::Morpher::TransformError => e
-        puts e.message
-      end
-
-      puts "\n------ With failing #dump -------\n\n"
-
-      begin
-        person = mapper.dump(Anima.build(:id).new(id: 1))
-      rescue Mom::Morpher::TransformError => e
-        puts e.message
-      end
-
-    end
   end
 end

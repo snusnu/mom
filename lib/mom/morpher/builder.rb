@@ -5,23 +5,29 @@ module Mom
     class Builder
 
       include AbstractType
-      include Concord.new(:builder, :definition, :environment)
       include ::Morpher::NodeHelpers
+
+      include Anima.new(
+        :name,
+        :definition,
+        :environment
+      )
+
+      include Anima::Update
 
       REGISTRY = {}
 
       abstract_method :processors
 
-      def self.call(builder, *args)
-        REGISTRY.fetch(builder).new(builder, *args).call
+      def self.call(options)
+        REGISTRY.fetch(options.fetch(:name)).new(options).call
       end
 
-      def self.register(builder)
-        REGISTRY[builder] = self
+      def self.register(name)
+        REGISTRY[name] = self
       end
-      private_class_method :register
 
-      class HashTransformer < self
+      class Hash < self
         register :hash
 
         private
@@ -31,13 +37,19 @@ module Mom
         end
       end
 
-      class ObjectMapper < self
+      class Object < self
         register :object
+
+        include anima.add(:models)
 
         private
 
         def processors
-          [environment.model_processor(definition)]
+          model = models.fetch(definition.entity_name) {
+            # TODO nuke the need to know a model builder
+            Model::Builder[:anima].call(definition)
+          }
+          [ s(:load_attribute_hash, s(:param, model)) ]
         end
       end
 
@@ -53,7 +65,7 @@ module Mom
       private
 
       def attributes
-        definition.attribute_nodes(environment, builder)
+        definition.attribute_nodes(environment, self)
       end
 
       def defaults

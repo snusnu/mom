@@ -3,18 +3,16 @@
 module Mom
   module Model
 
-    class Builder
+    def self.build(definition, builder_name)
+      Builder[builder_name].call(definition)
+    end
 
-      include Concord.new(:registry)
+    class Builder
 
       REGISTRY = {}
 
-      def self.call(name, registry)
-        Registry.new(name, builder(name, registry).call)
-      end
-
-      def self.builder(name, registry)
-        REGISTRY.fetch(name).new(registry)
+      def self.[](name)
+        REGISTRY.fetch(name)
       end
 
       def self.registered?(name)
@@ -22,7 +20,7 @@ module Mom
       end
 
       def self.register(name)
-        REGISTRY[name] = self
+        REGISTRY[name] = new
       end
       private_class_method :register
 

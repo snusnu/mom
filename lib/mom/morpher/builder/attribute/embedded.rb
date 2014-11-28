@@ -19,16 +19,14 @@ module Mom
           def initialize(attribute, *args)
             super
             @entity_name = attribute.entity_name
-            @definitions = environment.definitions
           end
 
           private
 
           attr_reader :entity_name
-          attr_reader :definitions
 
           def node
-            Builder.call(builder, definition, environment)
+            builder.update(definition: definition).call
           end
 
           class Embedded < self
@@ -43,9 +41,11 @@ module Mom
           end # Embedded
 
           class Referenced < self
+            attr_reader :definition
 
-            def definition
-              definitions[entity_name]
+            def initialize(*)
+              super
+              @definition = environment.definition(entity_name)
             end
           end # Referenced
         end # Entity

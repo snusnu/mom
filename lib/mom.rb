@@ -30,27 +30,14 @@ module Mom
     Inflecto.singularize(word.to_s).to_sym
   end
 
-  def self.definition_registry(options = Definition::DEFAULT_OPTIONS, definitions = {}, &block)
-    Definition::Registry.build(options, definitions, &block)
-  end
-
-  def self.hash_transformers(definitions, processors = PROCESSORS, model_builder = :anima)
-    environment(definitions, processors, model_builder).hash_transformers
-  end
-
-  def self.object_mappers(definitions, processors = PROCESSORS, model_builder = :anima)
-    environment(definitions, processors, model_builder).object_mappers
-  end
-
-  def self.environment(definitions, processors, model_builder = :anima)
-    definitions.environment(definitions.models(model_builder), processors)
+  def self.environment(options = Environment::BUILD_OPTIONS, &block)
+    Environment.build(options, &block)
   end
 
 end # Mom
 
 require 'mom/version'
 require 'mom/definition'
-require 'mom/definition/registry'
 require 'mom/definition/attribute'
 require 'mom/definition/attribute/primitive'
 require 'mom/definition/attribute/embedded'
@@ -59,8 +46,8 @@ require 'mom/morpher/builder/attribute/primitive'
 require 'mom/morpher/builder/attribute/embedded'
 require 'mom/morpher/builder'
 require 'mom/morpher'
-require 'mom/model/registry'
 require 'mom/model/builder'
 require 'mom/model/builder/anima'
 require 'mom/environment'
 require 'mom/registry'
+require 'mom/dsl'

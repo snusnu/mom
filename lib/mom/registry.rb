@@ -8,5 +8,9 @@ module Mom
     def [](name)
       items.fetch(name)
     end
+
+    def fetch(name, &block)
+      items.fetch(name, &block)
+    end
   end # Registry
 end # Mom

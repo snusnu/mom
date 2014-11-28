@@ -2,26 +2,28 @@
 
 module Mom
 
-  def self.mappers(definitions, processors = PROCESSORS, model_builder = :anima)
-    environment(definitions, processors, model_builder).mappers
-  end
-
   class Environment
 
-    def mappers
-      registry { |definition, env| Mapper.build(definition, env) }
+    def mappers(models)
+      registry { |definition|
+        Mapper.build(definition, self, models)
+      }
     end
 
-    def mapper(name)
-      Mapper.build(definitions[name], self)
+    def mapper(name, models)
+      Mapper.build(definitions[name], self, models)
     end
-
   end # Environment
 
   class Mapper
 
-    def self.build(definition, environment)
-      new(Morpher.transformer(:object, definition, environment))
+    def self.build(definition, environment, models)
+      new(Morpher.transformer(
+        name:        :object,
+        definition:  definition,
+        environment: environment,
+        models:      models
+      ))
     end
 
     attr_reader :loader
@@ -39,6 +41,5 @@ module Mom
     def dump(object)
       dumper.call(object)
     end
-
   end # Mapper
 end # Mom

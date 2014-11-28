@@ -6,17 +6,9 @@ module Mom
 
       class Anima < self
 
-        include ::Morpher::NodeHelpers
-
         register :anima
 
-        def call
-          registry.each_with_object({}) { |(name, definition), hash|
-            hash[name] = model(definition)
-          }
-        end
-
-        def model(definition)
+        def call(definition)
           Class.new do
             include ::Anima.new(*definition.attribute_names)
 
@@ -25,17 +17,6 @@ module Mom
             end
           end
         end
-
-        def processor(definition)
-          s(:load_attribute_hash, s(:param, param(definition)))
-        end
-
-        private
-
-        def param(definition)
-          registry.fetch(definition.entity_name) { model(definition) }
-        end
-
       end # Anima
     end # Builder
   end # Model

@@ -2,78 +2,59 @@
 
 module Mom
   class Environment
+    include Concord.new(:definitions, :processors)
 
-    include Anima.new(
-      :definitions,
-      :processors,
-      :models
-    )
-
-    include Lupo.enumerable(:definitions)
-
-    DEFAULTS = {
+    BUILD_OPTIONS = Definition::DEFAULT_OPTIONS.merge(
       processors: PROCESSORS
-    }.freeze
+    ).freeze
 
-    BUILD_OPTIONS = Definition::DEFAULT_OPTIONS.merge(DEFAULTS).freeze
+    def self.build(options = BUILD_OPTIONS, &block)
+      opts = options.reject { |k,_| k == :processors }
+      dsl  = DSL::Environment.new(BUILD_OPTIONS.merge(opts), {})
+      dsl.instance_eval(&block) if block
 
-    def self.build(model_builder = :anima, options = BUILD_OPTIONS, &block)
-      default_options = options.reject { |k,_| k == :processors }
-      definitions     = Definition::Registry.build(default_options, &block)
-      new(
-        definitions: definitions,
-        processors:  options.fetch(:processors),
-        models:      definitions.models(model_builder)
-      )
-    end
-
-    def self.new(attributes)
-      super(DEFAULTS.merge(attributes))
+      new(Registry.new(dsl.definitions), options.fetch(:processors, PROCESSORS))
     end
 
     def hash_transformers
-      registry { |definition, env| Morpher.hash_transformer(definition, env) }
+      registry { |definition|
+        Morpher.transformer(
+          name:        :hash,
+          definition:  definition,
+          environment: self
+        )
+      }
     end
 
-    def object_mappers
-      registry { |definition, env| Morpher.object_mapper(definition, env) }
+    def object_mappers(models)
+      registry { |definition|
+        Morpher.transformer(
+          name:        :object,
+          definition:  definition,
+          environment: self,
+          models:      models
+        )
+      }
     end
 
-    def hash_transformer(name = EMPTY_STRING, options = {prefix: name}, &block)
-      Morpher.transformer(:hash, definition(name, options, &block), self)
-    end
-
-    def object_mapper(name = EMPTY_STRING, options = {prefix: name}, &block)
-      Morpher.transformer(:object, definition(name, options, &block), self)
+    def models(builder_name)
+      registry { |definition| Model.build(definition, builder_name) }
     end
 
     def processor(name, options)
       processors.fetch(name).call(options)
     end
 
-    def model(name)
-      models[name]
-    end
-
-    def model_processor(definition)
-      models.processor(definition)
-    end
-
-    def default_options
-      definitions.default_options
+    def definition(entity_name)
+      definitions[entity_name]
     end
 
     private
 
-    def definition(entity_name, options, &block)
-      definitions.definition(entity_name, options, &block)
-    end
-
     def registry
-      Registry.new(each_with_object({}) { |(name, definition), h|
-        h[name] = yield(definition, self)
+      Registry.new(definitions.each_with_object({}) { |(name, definition), h|
+        h[name] = yield(definition)
       })
     end
-
   end # Environment
 end # Mom

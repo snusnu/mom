@@ -14,8 +14,8 @@ module Mom
         super(name.to_sym, options)
       end
 
-      def node(environment, entity_builder_name)
-        builder.call(self, environment, entity_builder_name)
+      def node(environment, definition_builder)
+        builder.call(self, environment, definition_builder)
       end
 
       def default_value?

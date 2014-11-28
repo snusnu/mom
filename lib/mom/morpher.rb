@@ -14,8 +14,8 @@ module Mom
 
     include Concord.new(:evaluator)
 
-    def self.transformer(name, definition, environment)
-      compile(Builder.call(name, definition, environment))
+    def self.transformer(options)
+      compile(Builder.call(options))
     end
 
     def self.compile(node)

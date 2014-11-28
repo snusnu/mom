@@ -15,36 +15,13 @@ module Mom
     public :entity_name
     public :default_options
 
-    def self.build(entity_name, default_options = DEFAULT_OPTIONS, header = EMPTY_ARRAY, &block)
-      instance = new(entity_name, {prefix: entity_name}.merge(default_options), header)
-      instance.instance_eval(&block) if block
-      instance
-    end
+    def self.build(entity_name, default_options = DEFAULT_OPTIONS, &block)
+      opts = {prefix: entity_name}.merge(default_options)
 
-    def self.new(entity_name, default_options, header)
-      super(entity_name, default_options.dup, header.dup)
-    end
+      dsl = DSL::Definition.new(entity_name, opts, Set.new)
+      dsl.instance_eval(&block) if block
 
-    def map(name, *args)
-      header << Attribute::Primitive.build(name, default_options, args)
-    end
-
-    def wrap(name, options = EMPTY_HASH, &block)
-      header << Attribute::Entity.build(
-        name,
-        wrap_options(name, options),
-        default_options,
-        block
-      )
-    end
-
-    def group(name, options = EMPTY_HASH, &block)
-      header << Attribute::Collection.build(
-        name,
-        group_options(name, options),
-        default_options,
-        block
-      )
+      new(entity_name, opts, dsl.header)
     end
 
     def attribute_nodes(environment, builder)
@@ -62,16 +39,5 @@ module Mom
         end
       }
     end
-
-    private
-
-    def wrap_options(name, options)
-      { entity: :"#{entity_name}.#{name}" }.merge(options)
-    end
-
-    def group_options(name, options)
-      { entity: :"#{entity_name}.#{Inflecto.singularize(name.to_s)}" }.merge(options)
-    end
-
   end # Definition
 end # Mom

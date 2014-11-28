@@ -4,7 +4,7 @@ require 'spec_helper'
 
 require 'mom/mapper'
 
-registry = Mom.definition_registry do # build models using :anima
+mom = Mom.environment do
   register :user do
     map :id
     map :name
@@ -17,7 +17,8 @@ registry = Mom.definition_registry do # build models using :anima
   end
 end
 
-mappers = Mom.mappers(registry)
+models  = mom.models(:anima)
+mappers = mom.mappers(models)
 
 mapper = mappers[:user]
 hash   = {id: 1, name: 'snusnu', tasks: [{id: 1, title: 'doit'}]}
