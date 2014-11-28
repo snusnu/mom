@@ -51,7 +51,7 @@ describe 'entity mapping' do
         map :description,   :OString
         map :collaborators, :ParsedInt10Array
 
-        group :labels, entity: :label do
+        group :labels do
           map :name,  :String
           map :color, :String
         end
@@ -71,12 +71,12 @@ describe 'entity mapping' do
 
         group :tasks, entity: :task
 
-        group :addresses, entity: :address, from: :residences do
+        group :addresses, from: :residences do
           map :street,  :String
           map :city,    :String
           map :country, :String
 
-          group :tags, entity: :tag, from: :categories do
+          group :tags, from: :categories do
             map :name, :String
           end
         end
