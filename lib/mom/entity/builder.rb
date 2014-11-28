@@ -11,6 +11,10 @@ module Mom
 
       REGISTRY = {}
 
+      def self.register(name, builder)
+        REGISTRY[name] = builder
+      end
+
       def self.[](name)
         REGISTRY.fetch(name)
       end
@@ -18,11 +22,6 @@ module Mom
       def self.registered?(name)
         REGISTRY.key?(name)
       end
-
-      def self.register(name)
-        REGISTRY[name] = new
-      end
-      private_class_method :register
 
     end # Builder
   end # Entity
