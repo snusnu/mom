@@ -47,7 +47,7 @@ module Mom
         def processors
           model = models.fetch(definition.entity_name) {
             # TODO nuke the need to know a model builder
-            Model::Builder[:anima].call(definition)
+            Entity::Builder[:anima].call(definition)
           }
           [ s(:load_attribute_hash, s(:param, model)) ]
         end

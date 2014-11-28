@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 module Mom
-  module Model
+  module Entity
     class Builder
 
       class Anima < self
@@ -19,5 +19,5 @@ module Mom
         end
       end # Anima
     end # Builder
-  end # Model
+  end # Entity
 end # Mom

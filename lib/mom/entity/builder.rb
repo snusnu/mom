@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 module Mom
-  module Model
+  module Entity
 
     def self.build(definition, builder_name)
       Builder[builder_name].call(definition)
@@ -25,5 +25,5 @@ module Mom
       private_class_method :register
 
     end # Builder
-  end # Model
+  end # Entity
 end # Mom

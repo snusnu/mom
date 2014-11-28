@@ -17,8 +17,8 @@ mom = Mom.environment do
   end
 end
 
-models  = mom.models(:anima)
-mappers = mom.mappers(models)
+entities = mom.entities(:anima)
+mappers  = mom.mappers(entities)
 
 mapper = mappers[:user]
 hash   = {id: 1, name: 'snusnu', tasks: [{id: 1, title: 'doit'}]}

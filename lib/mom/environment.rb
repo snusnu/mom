@@ -44,8 +44,8 @@ module Mom
       }
     end
 
-    def models(builder_name)
-      registry { |definition| Model.build(definition, builder_name) }
+    def entities(builder_name)
+      registry { |definition| Entity.build(definition, builder_name) }
     end
 
     def processor(name, options)

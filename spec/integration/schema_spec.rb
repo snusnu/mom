@@ -118,13 +118,13 @@ describe 'entity mapping' do
     expect(morpher.call({           })[:page]).to be(1)
     expect(morpher.call('page' => '2')[:page]).to be(2)
 
-    # Generate model classes for all data definitions using :anima builder
+    # Generate entity classes for all data definitions using :anima builder
 
-    models = mom.models(:anima)
+    entities = mom.entities(:anima)
 
     # Create transformers from hash to entity (object)
 
-    object_mappers = mom.object_mappers(models)
+    object_mappers = mom.object_mappers(entities)
 
     morpher = object_mappers[:page]
 
@@ -133,7 +133,7 @@ describe 'entity mapping' do
 
     # Create a bidirectional mapper for :task data
 
-    mapper = mom.mapper(:task, models)
+    mapper = mom.mapper(:task, entities)
 
     hash = {
       'name'          => 'test',
@@ -150,7 +150,7 @@ describe 'entity mapping' do
 
     # Create a bidirectional mapper for :person data
 
-    mapper = mom.mapper(:person, models)
+    mapper = mom.mapper(:person, entities)
 
     hash = {
       'name'            => 'snusnu',
