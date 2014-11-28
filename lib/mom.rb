@@ -26,16 +26,16 @@ module Mom
   # An empty frozen array
   EMPTY_ARRAY = [].freeze
 
-  def self.singularize(word)
-    Inflecto.singularize(word.to_s).to_sym
-  end
-
   def self.environment(options = EMPTY_HASH, &block)
     Environment.build(options, &block)
   end
 
   def self.schema(options = EMPTY_HASH, definitions = {})
     DSL::Schema.new(options, definitions)
+  end
+
+  def self.singularize(word)
+    Inflecto.singularize(word.to_s).to_sym
   end
 
 end # Mom
