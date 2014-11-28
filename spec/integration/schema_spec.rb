@@ -12,7 +12,7 @@ describe 'entity mapping' do
 
   it 'works for arbitrarily embedded values and collections' do
 
-    # (1) Optionally extend the builtin attribute processors
+    # Optionally extend the builtin attribute processors
 
     processors = Mom::PROCESSORS.merge(
 
@@ -25,9 +25,9 @@ describe 'entity mapping' do
 
     )
 
-    schema = Mom.schema(key_transform: :symbolize, processors: processors)
+    # Create a schema for defining domain data
 
-    # (2) Create an environment for building models, morphers and mappers
+    schema = Mom.schema(key_transform: :symbolize, processors: processors)
 
     schema.register(:name) do
       map :name
@@ -82,9 +82,11 @@ describe 'entity mapping' do
       end
     end
 
+    # Create an environment suitable for building transformers
+
     mom = Mom::Environment.coerce(schema, processors)
 
-    # ----------------------------------------------------------------
+    # Create transformers from hash to hash
 
     hash_transformers = mom.hash_transformers
 
@@ -116,9 +118,11 @@ describe 'entity mapping' do
     expect(morpher.call({           })[:page]).to be(1)
     expect(morpher.call('page' => '2')[:page]).to be(2)
 
-    # (3) Generate model classes for all entities using :anima builder
+    # Generate model classes for all data definitions using :anima builder
 
     models = mom.models(:anima)
+
+    # Create transformers from hash to entity (object)
 
     object_mappers = mom.object_mappers(models)
 
@@ -126,6 +130,8 @@ describe 'entity mapping' do
 
     expect(morpher.call({           }).page).to be(1)
     expect(morpher.call('page' => '2').page).to be(2)
+
+    # Create a bidirectional mapper for :task data
 
     mapper = mom.mapper(:task, models)
 
@@ -141,6 +147,8 @@ describe 'entity mapping' do
 
     # Expect it to roundtrip
     expect(mapper.dump(mapper.load(hash))).to eql(hash)
+
+    # Create a bidirectional mapper for :person data
 
     mapper = mom.mapper(:person, models)
 
