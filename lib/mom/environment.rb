@@ -9,11 +9,10 @@ module Mom
     ).freeze
 
     def self.build(options = BUILD_OPTIONS, &block)
-      opts = options.reject { |k,_| k == :processors }
-      dsl  = DSL::Environment.new(BUILD_OPTIONS.merge(opts), {})
-      dsl.instance_eval(&block) if block
+      opts       = BUILD_OPTIONS.merge(options)
+      processors = opts.delete(:processors) { |_| PROCESSORS }
 
-      new(Registry.new(dsl.definitions), options.fetch(:processors, PROCESSORS))
+      new(Registry.new(DSL::Environment.call(opts, &block)), processors)
     end
 
     def hash_transformers

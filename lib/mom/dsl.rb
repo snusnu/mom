@@ -12,6 +12,12 @@ module Mom
     class Environment
       include Concord.new(:default_options, :definitions)
 
+      def self.call(options, definitions = {}, &block)
+        instance = new(options, definitions)
+        instance.instance_eval(&block) if block
+        instance.definitions
+      end
+
       public :definitions
 
       def register(name, options = EMPTY_HASH, &block)
@@ -25,6 +31,12 @@ module Mom
 
     class Definition
       include Concord.new(:entity_name, :default_options, :header)
+
+      def self.call(entity_name, options, header = Set.new, &block)
+        instance = new(entity_name, options, header)
+        instance.instance_eval(&block) if block
+        instance.header
+      end
 
       public :header
 
