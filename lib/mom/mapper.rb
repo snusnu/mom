@@ -4,25 +4,25 @@ module Mom
 
   class Environment
 
-    def mappers(models)
+    def mappers(entities)
       registry { |definition|
-        Mapper.build(definition, self, models)
+        Mapper.build(definition, self, entities)
       }
     end
 
-    def mapper(name, models)
-      Mapper.build(definitions[name], self, models)
+    def mapper(name, entities)
+      Mapper.build(definitions[name], self, entities)
     end
   end # Environment
 
   class Mapper
 
-    def self.build(definition, environment, models)
+    def self.build(definition, environment, entities)
       new(Morpher.transformer(
         name:        :object,
         definition:  definition,
         environment: environment,
-        models:      models
+        entities:    entities
       ))
     end
 

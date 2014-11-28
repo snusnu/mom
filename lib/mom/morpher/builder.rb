@@ -40,16 +40,16 @@ module Mom
       class Object < self
         register :object
 
-        include anima.add(:models)
+        include anima.add(:entities)
 
         private
 
         def processors
-          model = models.fetch(definition.entity_name) {
-            # TODO nuke the need to know a model builder
+          entity = entities.fetch(definition.entity_name) {
+            # TODO nuke the need to know an entity builder
             Entity::Builder[:anima].call(definition)
           }
-          [ s(:load_attribute_hash, s(:param, model)) ]
+          [ s(:load_attribute_hash, s(:param, entity)) ]
         end
       end
 

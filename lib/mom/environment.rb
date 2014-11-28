@@ -33,13 +33,13 @@ module Mom
       }
     end
 
-    def object_mappers(models)
+    def object_mappers(entities)
       registry { |definition|
         Morpher.transformer(
           name:        :object,
           definition:  definition,
           environment: self,
-          models:      models
+          entities:    entities
         )
       }
     end
