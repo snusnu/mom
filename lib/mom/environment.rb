@@ -8,11 +8,19 @@ module Mom
       processors: PROCESSORS
     ).freeze
 
-    def self.build(options = BUILD_OPTIONS, &block)
+    def self.build(options = EMPTY_HASH, &block)
       opts       = BUILD_OPTIONS.merge(options)
       processors = opts.delete(:processors) { |_| PROCESSORS }
 
-      new(Registry.new(DSL::Environment.call(opts, &block)), processors)
+      new(DSL::Schema.call(opts, &block), processors)
+    end
+
+    def self.coerce(schema, processors = PROCESSORS)
+      new(schema.definitions, processors)
+    end
+
+    def self.new(definitions, processors)
+      super(Registry.new(definitions), processors)
     end
 
     def hash_transformers

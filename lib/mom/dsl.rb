@@ -9,13 +9,19 @@ module Mom
       end
     end # AlreadyRegistered
 
-    class Environment
+    class Schema
       include Concord.new(:default_options, :definitions)
 
-      def self.call(options, definitions = {}, &block)
-        instance = new(options, definitions)
+      DEFAULT_OPTIONS = Mom::Definition::DEFAULT_OPTIONS
+
+      def self.call(default_options, definitions = {}, &block)
+        instance = new(default_options, definitions)
         instance.instance_eval(&block) if block
         instance.definitions
+      end
+
+      def self.new(default_options, definitions)
+        super(DEFAULT_OPTIONS.merge(default_options), definitions)
       end
 
       public :definitions
@@ -27,7 +33,7 @@ module Mom
           name, default_options.merge(options), &block
         )
       end
-    end # Environment
+    end # Schema
 
     class Definition
       include Concord.new(:entity_name, :default_options, :header)

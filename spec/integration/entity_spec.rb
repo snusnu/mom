@@ -25,63 +25,64 @@ describe 'entity mapping' do
 
     )
 
+    schema = Mom.schema(key_transform: :symbolize, processors: processors)
+
     # (2) Create an environment for building models, morphers and mappers
 
-    mom = Mom.environment(key_transform: :symbolize, processors: processors) do
+    schema.register(:name) do
+      map :name
+    end
 
-      register(:name) do
-        map :name
+    schema.register(:id) do
+      map :id, from: 'ID'
+    end
+
+    schema.register(:page) do
+      map :page, :ParsedInt10, default: '1'
+    end
+
+    schema.register(:contact) do
+      map :email, :String, from: :email_address
+      map :phone, :String
+    end
+
+    schema.register(:task) do
+      map :name,          :String
+      map :description,   :OString
+      map :collaborators, :ParsedInt10Array
+
+      group :labels do
+        map :name,  :String
+        map :color, :String
+      end
+    end
+
+    schema.register(:person) do
+
+      map :name,   :String
+      map :gender, :Gender
+
+      wrap :contact, entity: :contact, from: :profile
+
+      wrap :account do
+        map :login,    :String
+        map :password, :String
       end
 
-      register(:id) do
-        map :id, from: 'ID'
-      end
+      group :tasks, entity: :task
 
-      register(:page) do
-        map :page, :ParsedInt10, default: '1'
-      end
+      group :addresses, from: :residences do
+        map :street,  :String
+        map :city,    :String
+        map :country, :String
 
-      register(:contact) do
-        map :email, :String, from: :email_address
-        map :phone, :String
-      end
-
-      register(:task) do
-        map :name,          :String
-        map :description,   :OString
-        map :collaborators, :ParsedInt10Array
-
-        group :labels do
-          map :name,  :String
-          map :color, :String
-        end
-      end
-
-      register(:person) do
-
-        map :name,   :String
-        map :gender, :Gender
-
-        wrap :contact, entity: :contact, from: :profile
-
-        wrap :account do
-          map :login,    :String
-          map :password, :String
-        end
-
-        group :tasks, entity: :task
-
-        group :addresses, from: :residences do
-          map :street,  :String
-          map :city,    :String
-          map :country, :String
-
-          group :tags, from: :categories do
-            map :name, :String
-          end
+        group :tags, from: :categories do
+          map :name, :String
         end
       end
     end
+
+    mom = Mom::Environment.coerce(schema, processors)
 
     # ----------------------------------------------------------------
 
