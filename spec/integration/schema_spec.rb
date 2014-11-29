@@ -82,6 +82,27 @@ describe 'entity mapping' do
       end
     end
 
+    expect {
+      schema.register(:broken_map) do
+        map :name
+        map :name
+      end
+    }.to raise_error(Mom::DSL::AlreadyRegistered)
+
+    expect {
+      schema.register(:broken_wrap) do
+        wrap :foo
+        wrap :foo
+      end
+    }.to raise_error(Mom::DSL::AlreadyRegistered)
+
+    expect {
+      schema.register(:broken_group) do
+        group :foo
+        group :foo
+      end
+    }.to raise_error(Mom::DSL::AlreadyRegistered)
+
     # Create an environment suitable for building transformers
 
     mom = Mom::Environment.coerce(schema, processors)

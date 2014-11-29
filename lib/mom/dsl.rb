@@ -9,6 +9,10 @@ module Mom
       end
     end # AlreadyRegistered
 
+    def self.fail_if_already_registered(name, items)
+      fail(AlreadyRegistered.new(name)) if items.key?(name)
+    end
+
     class Schema
       include Concord.new(:default_options, :definitions)
 
@@ -27,7 +31,7 @@ module Mom
       public :definitions
 
       def register(name, options = EMPTY_HASH, &block)
-        fail(AlreadyRegistered.new(name)) if definitions.key?(name)
+        DSL.fail_if_already_registered(name, definitions)
 
         definitions[name] = Definition.build(
           name, default_options.merge(options), &block
@@ -36,22 +40,26 @@ module Mom
     end # Schema
 
     class Entity
-      include Concord.new(:entity_name, :default_options, :header)
+      include Concord.new(:entity_name, :default_options, :attributes)
 
-      def self.call(entity_name, options, header = Set.new, &block)
-        instance = new(entity_name, options, header)
+      def self.call(entity_name, options, &block)
+        instance = new(entity_name, options, {})
         instance.instance_eval(&block) if block
-        instance.header
+        instance.attributes
       end
 
-      public :header
+      public :attributes
 
       def map(name, *args)
-        header << Definition::Attribute::Primitive.build(name, default_options, args)
+        fail_if_already_registered(name)
+
+        attributes[name] = Definition::Attribute::Primitive.build(name, default_options, args)
       end
 
       def wrap(name, options = EMPTY_HASH, &block)
-        header << Definition::Attribute::Entity.build(
+        fail_if_already_registered(name)
+
+        attributes[name] = Definition::Attribute::Entity.build(
           name,
           { entity: :"#{entity_name}.#{name}" }.merge(options),
           default_options,
@@ -60,13 +68,22 @@ module Mom
       end
 
       def group(name, options = EMPTY_HASH, &block)
-        header << Definition::Attribute::Collection.build(
+        fail_if_already_registered(name)
+
+        attributes[name] = Definition::Attribute::Collection.build(
           name,
           { entity: :"#{entity_name}.#{Inflecto.singularize(name.to_s)}" }.merge(options),
           default_options,
           block
         )
       end
+
+      private
+
+      def fail_if_already_registered(name)
+        DSL.fail_if_already_registered(name, attributes)
+      end
+
     end # Entity
   end # DSL
 end # Mom
