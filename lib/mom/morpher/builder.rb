@@ -64,7 +64,9 @@ module Mom
       private
 
       def attributes
-        definition.attribute_nodes(environment, self)
+        definition.attributes.map { |attribute|
+          Attribute.call(attribute, environment, self)
+        }
       end
 
       def defaults

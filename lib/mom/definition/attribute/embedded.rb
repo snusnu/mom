@@ -54,10 +54,6 @@ module Mom
         def referenced_name
           name
         end
-
-        def builder
-          Morpher::Builder::Attribute::Entity
-        end
       end # Entity
 
       class Collection < Entity
@@ -74,12 +70,7 @@ module Mom
         def referenced_name
           Mom.singularize(super)
         end
-
-        def builder
-          Morpher::Builder::Attribute::Collection
-        end
       end # Collection
-
     end # Attribute
   end # Definition
 end # Mom

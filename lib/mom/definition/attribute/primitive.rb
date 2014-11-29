@@ -102,12 +102,6 @@ module Mom
         def primitive?
           true
         end
-
-        private
-
-        def builder
-          Morpher::Builder::Attribute::Primitive
-        end
       end # Primitive
     end # Attribute
   end # Definition

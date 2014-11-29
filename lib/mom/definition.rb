@@ -21,8 +21,8 @@ module Mom
       new(entity_name, opts, DSL::Entity.call(entity_name, opts, &block))
     end
 
-    def attribute_nodes(environment, builder)
-      header.map { |_, attribute| attribute.node(environment, builder) }
+    def attributes
+      header.values
     end
 
     def attribute_names

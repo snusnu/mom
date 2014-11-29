@@ -8,14 +8,8 @@ module Mom
       include AbstractType
       include Concord::Public.new(:name, :options)
 
-      abstract_method :builder
-
       def initialize(name, options)
         super(name.to_sym, options)
-      end
-
-      def node(environment, definition_builder)
-        builder.call(self, environment, definition_builder)
       end
 
       def default_value?

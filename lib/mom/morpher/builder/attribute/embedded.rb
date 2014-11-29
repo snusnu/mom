@@ -5,6 +5,7 @@ module Mom
     class Builder
       class Attribute
         class Entity < self
+          register Definition::Attribute::Entity
 
           def initialize(attribute, *args)
             super
@@ -19,6 +20,8 @@ module Mom
         end # Entity
 
         class Collection < Entity
+          register Definition::Attribute::Collection
+
           private
 
           def node

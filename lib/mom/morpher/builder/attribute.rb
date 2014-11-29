@@ -8,9 +8,18 @@ module Mom
 
         include AbstractType
         include Concord.new(:attribute, :environment, :builder)
-        include Procto.call
 
         include ::Morpher::NodeHelpers
+
+        REGISTRY = {}
+
+        def self.register(attribute_class)
+          REGISTRY[attribute_class] = self
+        end
+
+        def self.call(attribute, environment, builder)
+          REGISTRY[attribute.class].new(attribute, environment, builder).call
+        end
 
         def initialize(*)
           super

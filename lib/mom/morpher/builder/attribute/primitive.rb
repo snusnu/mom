@@ -6,6 +6,8 @@ module Mom
       class Attribute
 
         class Primitive < self
+          register Definition::Attribute::Primitive
+
           private
 
           def node
