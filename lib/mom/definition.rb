@@ -10,7 +10,7 @@ module Mom
       name_generator: ->(entity_name, attribute_name) { attribute_name }
     }.freeze
 
-    include Concord.new(:entity_name, :default_options, :attributes)
+    include Concord.new(:entity_name, :default_options, :header)
 
     public :entity_name
     public :default_options
@@ -22,15 +22,15 @@ module Mom
     end
 
     def attribute_nodes(environment, builder)
-      attributes.map { |_, attribute| attribute.node(environment, builder) }
+      header.map { |_, attribute| attribute.node(environment, builder) }
     end
 
     def attribute_names
-      attributes.keys
+      header.keys
     end
 
     def defaults
-      attributes.each_with_object({}) { |(_, attribute), hash|
+      header.each_with_object({}) { |(_, attribute), hash|
         if attribute.default_value?
           hash[attribute.old_key] = attribute.default_value
         end
