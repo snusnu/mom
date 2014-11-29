@@ -33,11 +33,20 @@ module Mom
 
         def initialize(name, options, block)
           super(name, options)
-          @block       = block
+          @anonymous  = !!block
+          @definition = Definition.build(entity_name, options, &block) if anonymous?
+        end
+
+        def definition(environment)
+          anonymous? ? @definition : environment.definition(entity_name)
         end
 
         def embed?
-          !!block
+          anonymous? # TODO nuke
+        end
+
+        def anonymous?
+          @anonymous
         end
 
         def entity_name

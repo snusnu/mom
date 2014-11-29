@@ -32,11 +32,7 @@ module Mom
           class Embedded < self
 
             def definition
-              Mom::Definition.build(
-                entity_name,
-                options,
-                &attribute.block
-              )
+              @definition = attribute.definition(environment)
             end
           end # Embedded
 
@@ -45,7 +41,7 @@ module Mom
 
             def initialize(*)
               super
-              @definition = environment.definition(entity_name)
+              @definition = attribute.definition(environment)
             end
           end # Referenced
         end # Entity
