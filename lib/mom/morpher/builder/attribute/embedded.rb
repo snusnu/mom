@@ -9,7 +9,7 @@ module Mom
 
           def initialize(attribute, *args)
             super
-            @definition  = attribute.definition(environment)
+            @definition = attribute.definition(environment)
           end
 
           private
