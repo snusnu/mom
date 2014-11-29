@@ -74,7 +74,7 @@ module Mom
 
       def guards
         if guard = definition.default_options[:guard]
-          [s(:guard, s(:primitive, guard))]
+          [ s(:guard, s(:primitive, guard)) ]
         else
           EMPTY_ARRAY
         end
