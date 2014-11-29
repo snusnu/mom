@@ -184,5 +184,11 @@ describe 'entity mapping' do
 
     # Expect it to roundtrip
     expect(mapper.dump(mapper.load(hash))).to eql(hash)
+
+    # Test transformation error handling
+
+    expect {
+      mapper.load(invalid: :data)
+    }.to raise_error(Mom::Morpher::TransformError)
   end
 end
