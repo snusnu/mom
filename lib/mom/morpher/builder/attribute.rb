@@ -12,8 +12,6 @@ module Mom
 
         include ::Morpher::NodeHelpers
 
-        abstract_method :node
-
         def initialize(*)
           super
           @options = attribute.options

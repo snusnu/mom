@@ -41,10 +41,6 @@ module Mom
           anonymous? ? @definition : environment.definition(entity_name)
         end
 
-        def embed?
-          anonymous? # TODO nuke
-        end
-
         def anonymous?
           @anonymous
         end
