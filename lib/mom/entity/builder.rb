@@ -19,10 +19,6 @@ module Mom
         REGISTRY.fetch(name)
       end
 
-      def self.registered?(name)
-        REGISTRY.key?(name)
-      end
-
     end # Builder
   end # Entity
 end # Mom
