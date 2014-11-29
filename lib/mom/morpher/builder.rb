@@ -17,7 +17,7 @@ module Mom
 
       REGISTRY = {}
 
-      abstract_method :processors
+      abstract_method :call
 
       def self.call(options)
         REGISTRY.fetch(options.fetch(:name)).new(options).call
@@ -30,37 +30,36 @@ module Mom
       class Hash < self
         register :hash
 
-        private
-
-        def processors
-          EMPTY_ARRAY
+        def call
+          s(:block,
+            *guards,
+            *defaults,
+            s(:hash_transform, *attributes),
+          )
         end
-      end
+      end # Hash
 
-      class Object < self
+      class Object < Hash
         register :object
 
         include anima.add(:entities)
 
+        def call
+          s(:block,
+            super,
+            s(:load_attribute_hash, s(:param, entity))
+           )
+        end
+
         private
 
-        def processors
-          entity = entities.fetch(definition.entity_name) {
+        def entity
+          entities.fetch(definition.entity_name) {
             # TODO nuke the need to know an entity builder
             Entity::Builder[:anima].call(definition)
           }
-          [ s(:load_attribute_hash, s(:param, entity)) ]
         end
-      end
-
-      def call
-        s(:block,
-          *guards,
-          *defaults,
-          s(:hash_transform, *attributes),
-          *processors
-        )
-      end
+      end # Object
 
       private
 
