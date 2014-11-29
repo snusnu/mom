@@ -18,7 +18,7 @@ module Mom
     def self.build(entity_name, default_options = DEFAULT_OPTIONS, &block)
       opts = { prefix: entity_name }.merge(default_options)
 
-      new(entity_name, opts, DSL::Definition.call(entity_name, opts, &block))
+      new(entity_name, opts, DSL::Entity.call(entity_name, opts, &block))
     end
 
     def attribute_nodes(environment, builder)

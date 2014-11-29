@@ -12,7 +12,7 @@ module Mom
     class Schema
       include Concord.new(:default_options, :definitions)
 
-      DEFAULT_OPTIONS = Mom::Definition::DEFAULT_OPTIONS
+      DEFAULT_OPTIONS = Definition::DEFAULT_OPTIONS
 
       def self.call(default_options, definitions = {}, &block)
         instance = new(default_options, definitions)
@@ -29,13 +29,13 @@ module Mom
       def register(name, options = EMPTY_HASH, &block)
         fail(AlreadyRegistered.new(name)) if definitions.key?(name)
 
-        definitions[name] = Mom::Definition.build(
+        definitions[name] = Definition.build(
           name, default_options.merge(options), &block
         )
       end
     end # Schema
 
-    class Definition
+    class Entity
       include Concord.new(:entity_name, :default_options, :header)
 
       def self.call(entity_name, options, header = Set.new, &block)
@@ -47,11 +47,11 @@ module Mom
       public :header
 
       def map(name, *args)
-        header << Mom::Definition::Attribute::Primitive.build(name, default_options, args)
+        header << Definition::Attribute::Primitive.build(name, default_options, args)
       end
 
       def wrap(name, options = EMPTY_HASH, &block)
-        header << Mom::Definition::Attribute::Entity.build(
+        header << Definition::Attribute::Entity.build(
           name,
           { entity: :"#{entity_name}.#{name}" }.merge(options),
           default_options,
@@ -60,13 +60,13 @@ module Mom
       end
 
       def group(name, options = EMPTY_HASH, &block)
-        header << Mom::Definition::Attribute::Collection.build(
+        header << Definition::Attribute::Collection.build(
           name,
           { entity: :"#{entity_name}.#{Inflecto.singularize(name.to_s)}" }.merge(options),
           default_options,
           block
         )
       end
-    end # Definition
+    end # Entity
   end # DSL
 end # Mom
