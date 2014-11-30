@@ -6,9 +6,9 @@ module Mom
 
     Noop:         ->(_) { s(:input) },
 
-    PInt10:       ->(_) { s(:parse_int, 10) },
-    PInt10Array:  ->(_) { s(:map, s(:parse_int, 10)) },
-    PDateTime:    ->(_) { s(:parse_iso8601_date_time, 0) },
+    PInt10:       ->(_) { parsed_type(:parse_int, :is_a, Integer, 10) },
+    PInt10Array:  ->(_) { parsed_array_type(:parse_int, :is_a, Integer, 10) },
+    PDateTime:    ->(_) { parsed_type(:parse_iso8601_date_time, :primitive, DateTime, 0) },
 
     String:       ->(_) { type(:primitive, String) },
     Integer:      ->(_) { type(:is_a,      Integer) },
@@ -37,11 +37,19 @@ module Mom
     s(:guard, s(:xor, s(matcher, type), s(:primitive, NilClass)))
   end
 
+  def self.parsed_type(parser, matcher, target, *options)
+    s(:block, s(parser, *options), type(matcher, target))
+  end
+
   def self.array_type(matcher, type)
     s(:map, type(matcher, type))
   end
 
   def self.optional_array_type(matcher, type)
     s(:block, optional_type(:primitive, Array), array_type(matcher, type))
+  end
+
+  def self.parsed_array_type(parser, matcher, target, *options)
+    s(:map, parsed_type(parser, matcher, target, *options))
   end
 end # Mom
