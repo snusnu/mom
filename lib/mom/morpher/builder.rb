@@ -66,8 +66,11 @@ module Mom
       end
 
       def defaults
-        values = definition.defaults
-        values.any? ? [ s(:merge, values) ] : EMPTY_ARRAY
+        if (values = definition.defaults).any?
+          [ s(:merge, values) ]
+        else
+          EMPTY_ARRAY
+        end
       end
 
       def guards
