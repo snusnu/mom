@@ -30,7 +30,7 @@ module Mom
 
       public :definitions
 
-      def register(name, options = EMPTY_HASH, &block)
+      def entity(name, options = EMPTY_HASH, &block)
         DSL.fail_if_already_registered(name, definitions)
 
         definition = Definition.build(

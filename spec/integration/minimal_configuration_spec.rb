@@ -5,13 +5,13 @@ require 'spec_helper'
 require 'mom/mapper'
 
 mom = Mom.environment do
-  register :user do
+  entity :user do
     map :id
     map :name
     embed n, :tasks
   end
 
-  register :task do
+  entity :task do
     map :id
     map :title
   end

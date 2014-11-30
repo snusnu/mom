@@ -29,24 +29,24 @@ describe 'entity mapping' do
 
     schema = Mom.schema(key_transform: :symbolize, processors: processors)
 
-    schema.register(:name) do
+    schema.entity(:name) do
       map :name
     end
 
-    schema.register(:id) do
+    schema.entity(:id) do
       map :id, from: 'ID'
     end
 
-    schema.register(:page) do
+    schema.entity(:page) do
       map :page, :ParsedInt10, default: '1'
     end
 
-    schema.register(:contact) do
+    schema.entity(:contact) do
       map :email, :String, from: :email_address
       map :phone, :String
     end
 
-    schema.register(:task) do
+    schema.entity(:task) do
       map :name,          :String
       map :description,   :OString
       map :collaborators, :ParsedInt10Array
@@ -57,7 +57,7 @@ describe 'entity mapping' do
       end
     end
 
-    schema.register(:person) do
+    schema.entity(:person) do
 
       map :name,   :String
       map :gender, :Gender
@@ -83,14 +83,14 @@ describe 'entity mapping' do
     end
 
     expect {
-      schema.register(:broken_map) do
+      schema.entity(:broken_map) do
         map :name
         map :name
       end
     }.to raise_error(Mom::DSL::AlreadyRegistered)
 
     expect {
-      schema.register(:broken_embed) do
+      schema.entity(:broken_embed) do
         embed 1, :foo
         embed 1, :foo
       end
