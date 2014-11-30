@@ -38,7 +38,7 @@ describe 'entity mapping' do
     end
 
     schema.entity(:page) do
-      map :page, :ParsedInt10, default: '1'
+      map :page, :PInt10, default: '1'
     end
 
     schema.entity(:contact) do
@@ -49,7 +49,7 @@ describe 'entity mapping' do
     schema.entity(:task) do
       map :name,          :String
       map :description,   :OString
-      map :collaborators, :ParsedInt10Array
+      map :collaborators, :PInt10Array
 
       embed n, :labels do
         map :name,  :String
