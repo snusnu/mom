@@ -8,7 +8,7 @@ module Mom
 
     PInt10:           ->(_) { s(:parse_int, 10) },
     PInt10Array:      ->(_) { s(:map, s(:parse_int, 10)) },
-    PIso8601DateTime: ->(_) { s(:parse_iso8601_date_time, 0) },
+    PDateTime:        ->(_) { s(:parse_iso8601_date_time, 0) },
 
     String:           ->(_) { type(:primitive, String) },
     Integer:          ->(_) { type(:is_a,      Integer) },
