@@ -25,7 +25,7 @@ module Mom
 
     def initialize(*)
       super
-      @definitions = anonymous_definitions.unshift(self)
+      @definitions = anonymous_definitions.update(entity_name => self)
     end
 
     def attributes
@@ -51,8 +51,8 @@ module Mom
     private
 
     def anonymous_definitions
-      anonymous_embedded_attributes.reduce([]) { |memo, attr|
-        memo + attr.anonymous_definition.definitions
+      anonymous_embedded_attributes.each_with_object({}) { |attr, h|
+        h.update(Hash[attr.anonymous_definition.definitions.to_a])
       }
     end
 

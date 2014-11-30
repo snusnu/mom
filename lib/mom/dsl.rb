@@ -37,9 +37,7 @@ module Mom
           name, default_options.merge(options), &block
         )
 
-        definition.definitions.each do |d|
-          definitions[d.entity_name] = d
-        end
+        definitions.update(definition.definitions)
       end
     end # Schema
 
