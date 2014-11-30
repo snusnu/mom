@@ -41,6 +41,10 @@ module Mom
           anonymous? ? @definition : environment.definition(entity_name)
         end
 
+        def anonymous_definition
+          @definition
+        end
+
         def anonymous?
           @anonymous
         end

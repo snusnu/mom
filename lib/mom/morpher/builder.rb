@@ -44,20 +44,16 @@ module Mom
 
         include anima.add(:entities)
 
+        def initialize(_)
+          super
+          @entity = entities.fetch(definition.entity_name)
+        end
+
         def call
           s(:block,
             super,
-            s(:load_attribute_hash, s(:param, entity))
+            s(:load_attribute_hash, s(:param, @entity))
            )
-        end
-
-        private
-
-        def entity
-          entities.fetch(definition.entity_name) {
-            # TODO nuke the need to know an entity builder
-            Entity::Builder[:anima].call(definition)
-          }
         end
       end # Object
 

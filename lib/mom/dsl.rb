@@ -33,9 +33,13 @@ module Mom
       def register(name, options = EMPTY_HASH, &block)
         DSL.fail_if_already_registered(name, definitions)
 
-        definitions[name] = Definition.build(
+        definition = Definition.build(
           name, default_options.merge(options), &block
         )
+
+        definition.definitions.each do |d|
+          definitions[d.entity_name] = d
+        end
       end
     end # Schema
 

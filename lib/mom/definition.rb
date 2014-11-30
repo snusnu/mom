@@ -21,6 +21,13 @@ module Mom
       new(entity_name, opts, DSL::Entity.call(entity_name, opts, &block))
     end
 
+    attr_reader :definitions
+
+    def initialize(*)
+      super
+      @definitions = anonymous_definitions.unshift(self)
+    end
+
     def attributes
       header.values
     end
@@ -35,6 +42,22 @@ module Mom
           hash[attribute.old_key] = attribute.default_value
         end
       }
+    end
+
+    def anonymous?
+      definitions.size > 1
+    end
+
+    private
+
+    def anonymous_definitions
+      anonymous_embedded_attributes.reduce([]) { |memo, attr|
+        memo + attr.anonymous_definition.definitions
+      }
+    end
+
+    def anonymous_embedded_attributes
+      attributes.select { |attr| !attr.primitive? && attr.anonymous?  }
     end
   end # Definition
 end # Mom
