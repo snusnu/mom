@@ -5,7 +5,30 @@ module Mom
     class Attribute
 
       class OptionBuilder
-        include Concord.new(:name, :options, :default_options)
+        class Wrap < self
+          private
+
+          def local_entity_name
+            name
+          end
+        end
+
+        class Group < self
+          private
+
+          def local_entity_name
+            Mom.singularize(name)
+          end
+        end
+
+        include Anima.new(
+          :name,
+          :parent_entity_name,
+          :options,
+          :default_options,
+          :block
+        )
+
         include Procto.call
 
         def call
@@ -15,26 +38,31 @@ module Mom
         private
 
         def local_options
-          {entity: name, prefix: name_prefix}
+          {entity: entity_name, prefix: local_entity_name}
         end
 
-        def name_prefix
-          name
+        def entity_name
+          block ? :"#{parent_entity_name}.#{local_entity_name}" : name
         end
       end # OptionBuilder
 
       class Entity < self
 
-        attr_reader :block
+        OPTION_BUILDER = OptionBuilder::Wrap
 
-        def self.build(name, options, default_options, block)
-          new(name, self::OptionBuilder.call(name, options, default_options), block)
+        attr_reader :entity_name
+
+        def self.build(config)
+          name, block = config.values_at(:name, :block)
+          new(name, self::OPTION_BUILDER.call(config), block)
         end
 
         def initialize(name, options, block)
           super(name, options)
-          @anonymous  = !!block
-          @definition = Definition.build(entity_name, options, &block) if anonymous?
+
+          @entity_name = options.fetch(:entity)
+          @anonymous   = !!block
+          @definition  = Definition.build(entity_name, options, &block) if anonymous?
         end
 
         def definition(environment)
@@ -48,32 +76,10 @@ module Mom
         def anonymous?
           @anonymous
         end
-
-        def entity_name
-          options.fetch(:entity, referenced_name)
-        end
-
-        private
-
-        def referenced_name
-          name
-        end
       end # Entity
 
       class Collection < Entity
-        class OptionBuilder < Attribute::OptionBuilder
-          private
-
-          def name_prefix
-            Mom.singularize(super)
-          end
-        end
-
-        private
-
-        def referenced_name
-          Mom.singularize(super)
-        end
+        OPTION_BUILDER = OptionBuilder::Group
       end # Collection
     end # Attribute
   end # Definition

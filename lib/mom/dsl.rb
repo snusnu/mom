@@ -62,10 +62,11 @@ module Mom
         fail_if_already_registered(name)
 
         attributes[name] = Definition::Attribute::Entity.build(
-          name,
-          { entity: :"#{entity_name}.#{name}" }.merge(options),
-          default_options,
-          block
+          name:               name,
+          parent_entity_name: entity_name,
+          default_options:    default_options,
+          options:            options,
+          block:              block
         )
       end
 
@@ -73,10 +74,11 @@ module Mom
         fail_if_already_registered(name)
 
         attributes[name] = Definition::Attribute::Collection.build(
-          name,
-          { entity: :"#{entity_name}.#{Inflecto.singularize(name.to_s)}" }.merge(options),
-          default_options,
-          block
+          name:               name,
+          parent_entity_name: entity_name,
+          default_options:    default_options,
+          options:            options,
+          block:              block
         )
       end
 

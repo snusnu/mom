@@ -62,14 +62,14 @@ describe 'entity mapping' do
       map :name,   :String
       map :gender, :Gender
 
-      wrap :contact, entity: :contact, from: :profile
+      wrap :contact, from: :profile
 
       wrap :account do
         map :login,    :String
         map :password, :String
       end
 
-      group :tasks, entity: :task
+      group :assigned_tasks, entity: :task, from: :tasks
 
       group :addresses, from: :residences do
         map :street,  :String
@@ -166,6 +166,11 @@ describe 'entity mapping' do
       'collaborators' => [ '1' ]
     }
 
+    # Expect proper anonymous embedded entity
+    mapper.load(hash).labels.each do |label|
+      expect(label.class).to be(entities[:'task.label'])
+    end
+
     # Expect it to roundtrip
     expect(mapper.dump(mapper.load(hash))).to eql(hash)
 
@@ -202,6 +207,14 @@ describe 'entity mapping' do
         }]
       }]
     }
+
+    # Expect proper referenced wrapped entity
+    expect(mapper.load(hash).contact.class).to be(entities[:contact])
+
+    # Expect proper referenced grouped entity
+    mapper.load(hash).assigned_tasks.each do |task|
+      expect(task.class).to be(entities[:task])
+    end
 
     # Expect it to roundtrip
     expect(mapper.dump(mapper.load(hash))).to eql(hash)
