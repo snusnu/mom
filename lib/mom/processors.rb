@@ -4,28 +4,28 @@ module Mom
 
   PROCESSORS = {
 
-    Noop:                  ->(_) { s(:input) },
+    Noop:             ->(_) { s(:input) },
 
-    PInt10:                ->(_) { s(:parse_int, 10) },
-    PInt10Array:           ->(_) { s(:map, s(:parse_int, 10)) },
-    PIso8601DateTime:      ->(_) { s(:parse_iso8601_date_time, 0) },
+    PInt10:           ->(_) { s(:parse_int, 10) },
+    PInt10Array:      ->(_) { s(:map, s(:parse_int, 10)) },
+    PIso8601DateTime: ->(_) { s(:parse_iso8601_date_time, 0) },
 
-    String:                ->(_) { type(:primitive, String) },
-    Integer:               ->(_) { type(:is_a,      Integer) },
-    Date:                  ->(_) { type(:primitive, Date) },
-    DateTime:              ->(_) { type(:primitive, DateTime) },
-    Boolean:               ->(_) { s(:guard, s(:boolean)) },
+    String:           ->(_) { type(:primitive, String) },
+    Integer:          ->(_) { type(:is_a,      Integer) },
+    Date:             ->(_) { type(:primitive, Date) },
+    DateTime:         ->(_) { type(:primitive, DateTime) },
+    Boolean:          ->(_) { s(:guard, s(:boolean)) },
 
-    OString:               ->(_) { optional_type(:primitive, String) },
-    OInteger:              ->(_) { optional_type(:is_a,      Integer) },
-    ODate:                 ->(_) { optional_type(:primitive, Date) },
-    ODateTime:             ->(_) { optional_type(:primitive, DateTime) },
+    OString:          ->(_) { optional_type(:primitive, String) },
+    OInteger:         ->(_) { optional_type(:is_a,      Integer) },
+    ODate:            ->(_) { optional_type(:primitive, Date) },
+    ODateTime:        ->(_) { optional_type(:primitive, DateTime) },
 
-    IntArray:              ->(_) { array_type(:is_a,      Integer) },
-    StringArray:           ->(_) { array_type(:primitive, String) },
+    IntArray:         ->(_) { array_type(:is_a,      Integer) },
+    StringArray:      ->(_) { array_type(:primitive, String) },
 
-    OIntArray:             ->(_) { optional_array_type(:is_a, Integer) },
-    OStringArray:          ->(_) { optional_array_type(:primitive, String) },
+    OIntArray:        ->(_) { optional_array_type(:is_a, Integer) },
+    OStringArray:     ->(_) { optional_array_type(:primitive, String) },
 
   }.freeze
 
