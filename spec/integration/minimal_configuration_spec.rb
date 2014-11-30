@@ -8,7 +8,7 @@ mom = Mom.environment do
   register :user do
     map :id
     map :name
-    group :tasks, entity: :task
+    embed n, :tasks
   end
 
   register :task do

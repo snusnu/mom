@@ -34,6 +34,10 @@ module Mom
 
         attr_reader :options
 
+        def collection?
+          false
+        end
+
       end # Attribute
     end # Builder
   end # Morpher

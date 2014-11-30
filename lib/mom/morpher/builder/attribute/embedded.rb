@@ -15,19 +15,13 @@ module Mom
           private
 
           def node
+            attribute.collection? ? s(:map, morpher) : morpher
+          end
+
+          def morpher
             builder.update(definition: @definition).call
           end
         end # Entity
-
-        class Collection < Entity
-          register Definition::Attribute::Collection
-
-          private
-
-          def node
-            s(:map, super)
-          end
-        end # Collection
       end # Attribute
     end # Builder
   end # Morpher

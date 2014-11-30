@@ -5,7 +5,7 @@ module Mom
     class Attribute
 
       class OptionBuilder
-        class Wrap < self
+        class EV < self
           private
 
           def local_entity_name
@@ -13,7 +13,7 @@ module Mom
           end
         end
 
-        class Group < self
+        class EC < self
           private
 
           def local_entity_name
@@ -22,6 +22,7 @@ module Mom
         end
 
         include Anima.new(
+          :cardinality,
           :name,
           :parent_entity_name,
           :options,
@@ -29,7 +30,9 @@ module Mom
           :block
         )
 
-        include Procto.call
+        def self.call(options)
+          (options.fetch(:cardinality) == 1 ? EV : EC).new(options).call
+        end
 
         def call
           default_options.merge(local_options).merge!(options)
@@ -38,28 +41,36 @@ module Mom
         private
 
         def local_options
-          {entity: entity_name, prefix: local_entity_name}
+          {
+            cardinality: cardinality,
+            entity:      entity_name,
+            prefix:      local_entity_name
+          }
         end
 
         def entity_name
-          block ? :"#{parent_entity_name}.#{local_entity_name}" : name
+          if block
+            :"#{parent_entity_name}.#{local_entity_name}"
+          else
+            local_entity_name
+          end
         end
       end # OptionBuilder
 
       class Entity < self
 
-        OPTION_BUILDER = OptionBuilder::Wrap
-
+        attr_reader :cardinality
         attr_reader :entity_name
 
         def self.build(config)
           name, block = config.values_at(:name, :block)
-          new(name, self::OPTION_BUILDER.call(config), block)
+          new(name, OptionBuilder.call(config), block)
         end
 
         def initialize(name, options, block)
           super(name, options)
 
+          @cardinality = options.fetch(:cardinality)
           @entity_name = options.fetch(:entity)
           @anonymous   = !!block
           @definition  = Definition.build(entity_name, options, &block) if anonymous?
@@ -67,6 +78,10 @@ module Mom
 
         def definition(environment)
           anonymous? ? @definition : environment.definition(entity_name)
+        end
+
+        def collection?
+          cardinality.is_a?(Range) || cardinality > 1
         end
 
         def anonymous_definition
@@ -77,10 +92,6 @@ module Mom
           @anonymous
         end
       end # Entity
-
-      class Collection < Entity
-        OPTION_BUILDER = OptionBuilder::Group
-      end # Collection
     end # Attribute
   end # Definition
 end # Mom

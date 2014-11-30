@@ -51,7 +51,7 @@ describe 'entity mapping' do
       map :description,   :OString
       map :collaborators, :ParsedInt10Array
 
-      group :labels do
+      embed n, :labels do
         map :name,  :String
         map :color, :String
       end
@@ -62,21 +62,21 @@ describe 'entity mapping' do
       map :name,   :String
       map :gender, :Gender
 
-      wrap :contact, from: :profile
+      embed 1, :contact, from: :profile
 
-      wrap :account do
+      embed 1, :account do
         map :login,    :String
         map :password, :String
       end
 
-      group :assigned_tasks, entity: :task, from: :tasks
+      embed n, :assigned_tasks, entity: :task, from: :tasks
 
-      group :addresses, from: :residences do
+      embed n, :addresses, from: :residences do
         map :street,  :String
         map :city,    :String
         map :country, :String
 
-        group :tags, from: :categories do
+        embed n, :tags, from: :categories do
           map :name, :String
         end
       end
@@ -90,16 +90,9 @@ describe 'entity mapping' do
     }.to raise_error(Mom::DSL::AlreadyRegistered)
 
     expect {
-      schema.register(:broken_wrap) do
-        wrap :foo
-        wrap :foo
-      end
-    }.to raise_error(Mom::DSL::AlreadyRegistered)
-
-    expect {
-      schema.register(:broken_group) do
-        group :foo
-        group :foo
+      schema.register(:broken_embed) do
+        embed 1, :foo
+        embed 1, :foo
       end
     }.to raise_error(Mom::DSL::AlreadyRegistered)
 

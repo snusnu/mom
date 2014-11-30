@@ -44,6 +44,8 @@ module Mom
     class Entity
       include Concord.new(:entity_name, :default_options, :attributes)
 
+      POSITIVE_INFINITY = 1.0 / 0
+
       def self.call(entity_name, options, &block)
         instance = new(entity_name, options, {})
         instance.instance_eval(&block) if block
@@ -58,22 +60,11 @@ module Mom
         attributes[name] = Definition::Attribute::Primitive.build(name, default_options, args)
       end
 
-      def wrap(name, options = EMPTY_HASH, &block)
+      def embed(cardinality, name, options = EMPTY_HASH, &block)
         fail_if_already_registered(name)
 
         attributes[name] = Definition::Attribute::Entity.build(
-          name:               name,
-          parent_entity_name: entity_name,
-          default_options:    default_options,
-          options:            options,
-          block:              block
-        )
-      end
-
-      def group(name, options = EMPTY_HASH, &block)
-        fail_if_already_registered(name)
-
-        attributes[name] = Definition::Attribute::Collection.build(
+          cardinality:        cardinality,
           name:               name,
           parent_entity_name: entity_name,
           default_options:    default_options,
@@ -86,6 +77,10 @@ module Mom
 
       def fail_if_already_registered(name)
         DSL.fail_if_already_registered(name, attributes)
+      end
+
+      def n
+        POSITIVE_INFINITY
       end
 
     end # Entity
