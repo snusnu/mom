@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'forwardable'
+
 require 'concord'
 require 'anima'
 require 'morpher'

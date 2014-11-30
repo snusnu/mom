@@ -3,14 +3,9 @@
 module Mom
 
   class Registry
+    extend Forwardable
     include Lupo.collection(:items)
 
-    def [](name)
-      items.fetch(name)
-    end
-
-    def fetch(name, &block)
-      items.fetch(name, &block)
-    end
+    def_delegators :@items, :[], :fetch
   end # Registry
 end # Mom
