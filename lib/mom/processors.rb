@@ -4,44 +4,44 @@ module Mom
 
   PROCESSORS = {
 
-    Noop:             ->(_) { s(:input) },
+    Noop:                  ->(_) { s(:input) },
 
-    ParsedInt10:      ->(_) { s(:parse_int, 10) },
-    ParsedInt10Array: ->(_) { s(:map, s(:parse_int, 10)) },
-
-    String:           ->(_) { s(:guard, s(:primitive, String)) },
-    Integer:          ->(_) { s(:guard, s(:is_a,      Integer)) },
-    Date:             ->(_) { s(:guard, s(:primitive, Date)) },
-    DateTime:         ->(_) { s(:guard, s(:primitive, DateTime)) },
-    Boolean:          ->(_) { s(:guard, s(:or, s(:primitive, TrueClass), s(:primitive, FalseClass))) },
-
-    OString:          ->(_) { s(:guard, s(:or, s(:primitive, String),   s(:primitive, NilClass))) },
-    OInteger:         ->(_) { s(:guard, s(:or, s(:is_a,      Integer),  s(:primitive, NilClass))) },
-    ODate:            ->(_) { s(:guard, s(:or, s(:primitive, Date),     s(:primitive, NilClass))) },
-    ODateTime:        ->(_) { s(:guard, s(:or, s(:primitive, DateTime), s(:primitive, NilClass))) },
-
-    IntArray:         ->(_) { s(:map, s(:guard, s(:is_a,      Integer))) },
-    StringArray:      ->(_) { s(:map, s(:guard, s(:primitive, String))) },
-
+    ParsedInt10:           ->(_) { s(:parse_int, 10) },
+    ParsedInt10Array:      ->(_) { s(:map, s(:parse_int, 10)) },
     ParsedIso8601DateTime: ->(_) { s(:parse_iso8601_date_time, 0) },
 
-    OIntArray: ->(_) {
-      s(:block,
-        s(:guard,
-          s(:or,
-            s(:primitive, NilClass),
-            s(:primitive, Array))),
-        s(:map, s(:guard, s(:is_a, Integer))))
-    },
+    String:                ->(_) { type(:primitive, String) },
+    Integer:               ->(_) { type(:is_a,      Integer) },
+    Date:                  ->(_) { type(:primitive, Date) },
+    DateTime:              ->(_) { type(:primitive, DateTime) },
+    Boolean:               ->(_) { s(:guard, s(:boolean)) },
 
-    OStringArray: ->(_) {
-      s(:block,
-        s(:guard,
-          s(:or,
-            s(:primitive, NilClass),
-            s(:primitive, Array))),
-        s(:map, s(:guard, s(:primitive, String))))
-    }
+    OString:               ->(_) { optional_type(:primitive, String) },
+    OInteger:              ->(_) { optional_type(:is_a,      Integer) },
+    ODate:                 ->(_) { optional_type(:primitive, Date) },
+    ODateTime:             ->(_) { optional_type(:primitive, DateTime) },
+
+    IntArray:              ->(_) { array_type(:is_a,      Integer) },
+    StringArray:           ->(_) { array_type(:primitive, String) },
+
+    OIntArray:             ->(_) { optional_array_type(:is_a, Integer) },
+    OStringArray:          ->(_) { optional_array_type(:primitive, String) },
 
   }.freeze
+
+  def self.type(matcher, type)
+    s(:guard, s(matcher, type))
+  end
+
+  def self.optional_type(matcher, type)
+    s(:guard, s(:xor, s(matcher, type), s(:primitive, NilClass)))
+  end
+
+  def self.array_type(matcher, type)
+    s(:map, type(matcher, type))
+  end
+
+  def self.optional_array_type(matcher, type)
+    s(:block, optional_type(:primitive, Array), array_type(matcher, type))
+  end
 end # Mom
