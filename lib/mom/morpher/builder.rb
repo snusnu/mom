@@ -8,28 +8,19 @@ module Mom
       include ::Morpher::NodeHelpers
 
       include Anima.new(
-        :name,
         :definition,
         :environment
       )
 
       include Anima::Update
 
-      REGISTRY = {}
-
       abstract_method :call
 
       def self.call(options)
-        REGISTRY.fetch(options.fetch(:name)).new(options).call
-      end
-
-      def self.register(name)
-        REGISTRY[name] = self
+        Morpher.compile(new(options).call)
       end
 
       class Hash < self
-        register :hash
-
         def call
           s(:block,
             *guards,
@@ -40,8 +31,6 @@ module Mom
       end # Hash
 
       class Object < Hash
-        register :object
-
         include anima.add(:entities)
 
         def initialize(_)

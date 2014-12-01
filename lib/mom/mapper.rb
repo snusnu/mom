@@ -18,8 +18,7 @@ module Mom
   class Mapper
 
     def self.build(definition, environment, entities)
-      new(Morpher.transformer(
-        name:        :object,
+      new(Morpher::Builder::Object.call(
         definition:  definition,
         environment: environment,
         entities:    entities

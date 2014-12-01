@@ -14,10 +14,6 @@ module Mom
 
     include Concord.new(:evaluator)
 
-    def self.transformer(options)
-      compile(Builder.call(options))
-    end
-
     def self.compile(node)
       new(::Morpher.compile(node))
     end
