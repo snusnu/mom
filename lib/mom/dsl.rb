@@ -16,19 +16,26 @@ module Mom
     class Schema
       include Concord.new(:default_options, :definitions)
 
-      DEFAULT_OPTIONS = Definition::DEFAULT_OPTIONS
-
       def self.call(default_options, definitions = {}, &block)
-        instance = new(default_options, definitions)
-        instance.instance_eval(&block) if block
-        instance.definitions
-      end
-
-      def self.new(default_options, definitions)
-        super(DEFAULT_OPTIONS.merge(default_options), definitions)
+        new(default_options, definitions).call(&block)
       end
 
       public :definitions
+
+      def initialize(default_options, definitions = {})
+        super(Definition::DEFAULT_OPTIONS.merge(default_options), definitions)
+        @constraints = Mom::Constraint.empty
+      end
+
+      def call(&block)
+        instance_eval(&block)
+        self
+      end
+
+      def constraints(&block)
+        return @constraints unless block_given?
+        @constraints = Constraint.call(&block)
+      end
 
       def entity(name, options = EMPTY_HASH, &block)
         DSL.fail_if_already_registered(name, definitions)
@@ -84,5 +91,27 @@ module Mom
       end
 
     end # Entity
+
+    class Constraint
+      include Concord.new(:registry)
+
+      public :registry
+
+      def self.call(registry = {}, &block)
+        instance = new(registry)
+        instance.instance_eval(&block) if block
+        Registry.new(instance.registry)
+      end
+
+      def use(library)
+        library.each { |name, provider| add(name, provider) }
+      end
+
+      def add(name, provider = Undefined, &block)
+        DSL.fail_if_already_registered(name, registry)
+
+        registry[name] = block ? Mom::Constraint.build(&block) : provider
+      end
+    end # Constraint
   end # DSL
 end # Mom

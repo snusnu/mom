@@ -12,85 +12,92 @@ describe 'entity mapping' do
 
   it 'works for arbitrarily embedded values and collections' do
 
-    # Optionally extend the builtin attribute processors
-
-    processors = Mom::PROCESSORS.merge(
-
-      Gender: ->(_) {
-        s(:guard,
-          s(:or,
-            s(:eql, s(:input), s(:static, 'M')),
-            s(:eql, s(:input), s(:static, 'F'))))
-      }
-
-    )
-
     # Create a schema for defining domain data
 
-    schema = Mom.schema(key_transform: :symbolize, processors: processors)
+    schema = Mom.schema(key_transform: :symbolize)
 
-    schema.entity(:name) do
-      map :name
-    end
+    schema.call do
 
-    schema.entity(:id) do
-      map :id, from: 'ID'
-    end
+      # Optionally extend the builtin attribute constraints
 
-    schema.entity(:page) do
-      map :page, :PInt10, default: '1'
-    end
+      constraints do
+        use Mom::Constraint.builtin
 
-    schema.entity(:contact) do
-      map :email, :String, from: :email_address
-      map :phone, :String
-    end
-
-    schema.entity(:task) do
-      map :name,          :String
-      map :description,   :OString
-      map :collaborators, :PInt10Array
-
-      embed n, :labels do
-        map :name,  :String
-        map :color, :String
-      end
-    end
-
-    schema.entity(:person) do
-
-      map :name,   :String
-      map :gender, :Gender
-
-      embed 1, :contact, from: :profile
-
-      embed 1, :account do
-        map :login,    :String
-        map :password, :String
+        add(:Gender) { enum('M', 'F', 'T') }
       end
 
-      embed n, :assigned_tasks, entity: :task, from: :tasks
+      # Add entity definitions
 
-      embed n, :addresses, from: :residences do
-        map :street,  :String
-        map :city,    :String
-        map :country, :String
+      entity :name do
+        map :name
+      end
 
-        embed n, :tags, from: :categories do
-          map :name, :String
+      entity :id do
+        map :id, from: 'ID'
+      end
+
+      entity :page do
+        map :page, :PInteger, default: '1'
+      end
+
+      entity :contact do
+        map :email, :String, from: :email_address
+        map :phone, :String
+      end
+
+      entity :task do
+        map :name,          :String
+        map :description,   :OString
+        map :collaborators, :PIntegerArray
+
+        embed n, :labels do
+          map :name,  :String
+          map :color, :String
         end
       end
-    end
+
+      entity :person do
+
+        map :name,   :String
+        map :gender, :Gender
+
+        embed 1, :contact, from: :profile
+
+        embed 1, :account do
+          map :login,    :String
+          map :password, :String
+        end
+
+        embed n, :assigned_tasks, entity: :task, from: :tasks
+
+        embed n, :addresses, from: :residences do
+          map :street,  :String
+          map :city,    :String
+          map :country, :String
+
+          embed n, :tags, from: :categories do
+            map :name, :String
+          end
+        end
+      end
+    end # schema
 
     expect {
-      schema.entity(:broken_map) do
+      schema.constraints  do
+        add(:foo) { |_| }
+        add(:foo) { |_| }
+      end
+    }.to raise_error(Mom::DSL::AlreadyRegistered)
+
+    expect {
+      schema.entity :broken_map  do
         map :name
         map :name
       end
     }.to raise_error(Mom::DSL::AlreadyRegistered)
 
     expect {
-      schema.entity(:broken_embed) do
+      schema.entity :broken_embed  do
         embed 1, :foo
         embed 1, :foo
       end
@@ -98,7 +105,7 @@ describe 'entity mapping' do
 
     # Create an environment suitable for building transformers
 
-    mom = Mom::Environment.coerce(schema, processors)
+    mom = Mom::Environment.coerce(schema)
 
     # Create transformers from hash to hash
 

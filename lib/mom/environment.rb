@@ -2,25 +2,14 @@
 
 module Mom
   class Environment
-    include Concord.new(:definitions, :processors)
+    include Concord.new(:definitions, :constraints)
 
-    BUILD_OPTIONS = Definition::DEFAULT_OPTIONS.merge(
-      processors: PROCESSORS
-    ).freeze
-
-    def self.build(options = EMPTY_HASH, &block)
-      opts       = BUILD_OPTIONS.merge(options)
-      processors = opts.delete(:processors) { |_| PROCESSORS }
-
-      new(DSL::Schema.call(opts, &block), processors)
+    def self.coerce(schema)
+      new(schema.definitions, schema.constraints)
     end
 
-    def self.coerce(schema, processors = PROCESSORS)
-      new(schema.definitions, processors)
-    end
-
-    def self.new(definitions, processors)
-      super(Registry.new(definitions), processors)
+    def self.new(definitions, constraints)
+      super(Registry.new(definitions), constraints)
     end
 
     def hash_transformers
@@ -48,8 +37,8 @@ module Mom
       registry { |definition| Entity.build(definition, builder_name) }
     end
 
-    def processor(name, options)
-      processors.fetch(name).call(options)
+    def constraint(name, options)
+      constraints.fetch(name).call(options)
     end
 
     def definition(entity_name)

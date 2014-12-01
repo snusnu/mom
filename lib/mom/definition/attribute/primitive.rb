@@ -8,8 +8,8 @@ module Mom
 
         class OptionBuilder
 
-          HANDLERS       = {}
-          NULL_PROCESSOR = { processor: :Noop }
+          HANDLERS        = {}
+          NOOP_CONSTRAINT = { constraint: :Noop }
 
           def self.handle(&test)
             HANDLERS[self] = test
@@ -21,7 +21,7 @@ module Mom
             private
 
             def options
-              NULL_PROCESSOR
+              NOOP_CONSTRAINT
             end
 
             class Configured < self
@@ -41,7 +41,7 @@ module Mom
             private
 
             def options
-              { processor: args.first }
+              { constraint: args.first }
             end
 
             class Configured < self
@@ -89,13 +89,13 @@ module Mom
           new(name, OptionBuilder.call(name, default_options, args))
         end
 
-        attr_reader :processor
+        attr_reader :constraint
         attr_reader :default_value
 
         def initialize(name, options)
           super
 
-          @processor     = options.fetch(:processor)
+          @constraint    = options.fetch(:constraint)
           @default_value = options.fetch(:default)
         end
 

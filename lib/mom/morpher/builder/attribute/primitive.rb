@@ -8,10 +8,19 @@ module Mom
         class Primitive < self
           register Definition::Attribute::Primitive
 
+          def initialize(*)
+            super
+            @constraint_options = options.reject { |name, _|
+              Definition::Attribute::OPTIONS.include?(name)
+            }
+          end
+
           private
 
+          attr_reader :constraint_options
+
           def node
-            environment.processor(attribute.processor, options)
+            environment.constraint(attribute.constraint, constraint_options)
           end
         end # Primitive
       end # Attribute

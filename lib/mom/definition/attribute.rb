@@ -5,6 +5,15 @@ module Mom
 
     class Attribute
 
+      OPTIONS = [
+        :prefix,
+        :constraint,
+        :key_transform,
+        :guard,
+        :from,
+        :default
+      ].freeze
+
       include AbstractType
       include Concord::Public.new(:name, :options)
 

@@ -11,8 +11,6 @@ require 'adamantium'
 require 'abstract_type'
 require 'inflecto'
 
-require 'mom/processors'
-
 # Morpher object mapper
 module Mom
 
@@ -29,7 +27,7 @@ module Mom
   EMPTY_ARRAY = [].freeze
 
   def self.environment(options = EMPTY_HASH, &block)
-    Environment.build(options, &block)
+    Environment.coerce(schema(options).call(&block))
   end
 
   def self.schema(options = EMPTY_HASH, definitions = {})
@@ -39,14 +37,16 @@ module Mom
   def self.singularize(word)
     Inflecto.singularize(word.to_s).to_sym
   end
-
 end # Mom
 
 require 'mom/version'
+require 'mom/registry'
+require 'mom/constraint'
 require 'mom/definition'
 require 'mom/definition/attribute'
 require 'mom/definition/attribute/primitive'
 require 'mom/definition/attribute/embedded'
+require 'mom/dsl'
 require 'mom/morpher/builder/attribute'
 require 'mom/morpher/builder/attribute/primitive'
 require 'mom/morpher/builder/attribute/embedded'
@@ -55,5 +55,3 @@ require 'mom/morpher'
 require 'mom/entity/builder'
 require 'mom/entity/builder/anima'
 require 'mom/environment'
-require 'mom/registry'
-require 'mom/dsl'
