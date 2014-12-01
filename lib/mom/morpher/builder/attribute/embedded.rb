@@ -7,6 +7,22 @@ module Mom
         class Entity < self
           register Definition::Attribute::Entity
 
+          def self.new(attribute, *args)
+            if self < Entity
+              super
+            elsif attribute.collection?
+              Collection.new(attribute, *args)
+            else
+              super
+            end
+          end
+
+          class Collection < self
+            def node
+              s(:map, super)
+            end
+          end # Collection
+
           def initialize(attribute, *args)
             super
             @definition = attribute.definition(environment)
@@ -15,10 +31,6 @@ module Mom
           private
 
           def node
-            attribute.collection? ? s(:map, morpher) : morpher
-          end
-
-          def morpher
             builder.update(definition: @definition).call
           end
         end # Entity
