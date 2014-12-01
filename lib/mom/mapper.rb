@@ -29,8 +29,8 @@ module Mom
     attr_reader :dumper
 
     def initialize(evaluator)
-      @loader = ::Morpher::Executor::Hybrid.new(evaluator)
-      @dumper = ::Morpher::Executor::Hybrid.new(evaluator.inverse)
+      @loader = executor(evaluator)
+      @dumper = executor(evaluator.inverse)
     end
 
     def load(tuple)
@@ -39,6 +39,12 @@ module Mom
 
     def dump(object)
       dumper.call(object)
+    end
+
+    private
+
+    def executor(evaluator)
+      ::Morpher::Executor::Hybrid.new(evaluator)
     end
   end # Mapper
 end # Mom
