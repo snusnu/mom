@@ -18,7 +18,7 @@ module Mom
   class Mapper
 
     def self.build(definition, environment, entities)
-      new(Morpher::Builder::Object.call(
+      new(Morpher::Builder::Object.evaluator(
         definition:  definition,
         environment: environment,
         entities:    entities
@@ -29,8 +29,8 @@ module Mom
     attr_reader :dumper
 
     def initialize(evaluator)
-      @loader = evaluator
-      @dumper = evaluator.inverse
+      @loader = ::Morpher::Executor::Hybrid.new(evaluator)
+      @dumper = ::Morpher::Executor::Hybrid.new(evaluator.inverse)
     end
 
     def load(tuple)

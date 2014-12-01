@@ -14,7 +14,7 @@ module Mom
 
     def hash_transformers
       registry { |definition|
-        Morpher::Builder::Hash.call(
+        Morpher::Builder::Hash.executor(
           definition:  definition,
           environment: self
         )
@@ -23,7 +23,7 @@ module Mom
 
     def object_mappers(entities)
       registry { |definition|
-        Morpher::Builder::Object.call(
+        Morpher::Builder::Object.executor(
           definition:  definition,
           environment: self,
           entities:    entities

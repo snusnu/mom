@@ -223,6 +223,6 @@ describe 'entity mapping' do
 
     expect {
       mapper.load(invalid: :data)
-    }.to raise_error(Mom::Morpher::TransformError)
+    }.to raise_error(Morpher::Executor::Hybrid::TransformError)
   end
 end

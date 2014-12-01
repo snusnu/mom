@@ -16,8 +16,12 @@ module Mom
 
       abstract_method :call
 
-      def self.call(options)
-        Morpher.compile(new(options).call)
+      def self.executor(options)
+        ::Morpher::Executor::Hybrid.new(evaluator(options))
+      end
+
+      def self.evaluator(options)
+        ::Morpher.compile(new(options).call)
       end
 
       class Hash < self
