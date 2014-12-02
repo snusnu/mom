@@ -73,7 +73,16 @@ module Mom
           @cardinality = options.fetch(:cardinality)
           @entity_name = options.fetch(:entity)
           @anonymous   = !!block
-          @definition  = Definition.build(entity_name, options, &block) if anonymous?
+
+          if anonymous?
+            @definition = Definition.build(
+              entity_name:     entity_name,
+              default_options: options,
+              header:          {},
+              constraints:     {},
+              &block
+            )
+          end
         end
 
         def definition(environment)

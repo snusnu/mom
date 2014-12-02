@@ -41,7 +41,11 @@ module Mom
         DSL.fail_if_already_registered(name, definitions)
 
         definition = Definition.build(
-          name, default_options.merge(options), &block
+          entity_name:     name,
+          default_options: default_options.merge(options),
+          header:          {},
+          constraints:     {},
+          &block
         )
 
         definitions.update(definition.definitions)
@@ -49,26 +53,26 @@ module Mom
     end # Schema
 
     class Entity
-      include Concord.new(:entity_name, :default_options, :attributes)
+      include Anima.new(*Definition::ATTRIBUTES)
 
-      def self.call(entity_name, options, &block)
-        instance = new(entity_name, options, {})
+      def self.call(options, &block)
+        instance = new(options)
         instance.instance_eval(&block) if block
-        instance.attributes
+        instance.definition
       end
-
-      public :attributes
 
       def map(name, *args)
         fail_if_already_registered(name)
 
-        attributes[name] = Definition::Attribute::Primitive.build(name, default_options, args)
+        header[name] = Definition::Attribute::Primitive.build(
+          name, default_options, args
+        )
       end
 
       def embed(cardinality, name, options = EMPTY_HASH, &block)
         fail_if_already_registered(name)
 
-        attributes[name] = Definition::Attribute::Entity.build(
+        header[name] = Definition::Attribute::Entity.build(
           cardinality:        cardinality,
           name:               name,
           parent_entity_name: entity_name,
@@ -78,10 +82,23 @@ module Mom
         )
       end
 
+      def check(name, options = EMPTY_HASH)
+        constraints[name] = options
+      end
+
+      def definition
+        Definition.new(
+          entity_name:     entity_name,
+          default_options: default_options,
+          header:          Registry.new(header),
+          constraints:     Registry.new(constraints)
+        )
+      end
+
       private
 
       def fail_if_already_registered(name)
-        DSL.fail_if_already_registered(name, attributes)
+        DSL.fail_if_already_registered(name, header)
       end
 
       def n

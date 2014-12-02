@@ -4,21 +4,33 @@ module Mom
 
   class Definition
 
+    ATTRIBUTES = [
+      :entity_name,
+      :default_options,
+      :header,
+      :constraints
+    ].freeze
+
     DEFAULT_OPTIONS = {
       guard:          Hash,
       key_transform: :neutral,
-      name_generator: ->(entity_name, attribute_name) { attribute_name }
+      name_generator: ->(entity_name, attribute_name) { attribute_name },
+      constraints:    Set.new
     }.freeze
 
-    include Concord.new(:entity_name, :default_options, :header)
+    include Anima.new(*ATTRIBUTES)
 
     public :entity_name
     public :default_options
 
-    def self.build(entity_name, default_options = DEFAULT_OPTIONS, &block)
-      opts = { prefix: entity_name }.merge(default_options)
+    def self.build(options, &block)
+      prefix, default_options = options.values_at(
+        :entity_name, :default_options
+      )
 
-      new(entity_name, opts, DSL::Entity.call(entity_name, opts, &block))
+      opts = { prefix: prefix }.merge(default_options)
+
+      DSL::Entity.call(options.merge(default_options: opts), &block)
     end
 
     attr_reader :definitions

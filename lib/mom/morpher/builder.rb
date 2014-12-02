@@ -30,7 +30,7 @@ module Mom
             *guards,
             *defaults,
             s(:hash_transform, *attributes),
-          )
+            s(:block, *constraints))
         end
       end # Hash
 
@@ -45,8 +45,7 @@ module Mom
         def call
           s(:block,
             super,
-            s(:load_attribute_hash, s(:param, @entity))
-           )
+            s(:load_attribute_hash, s(:param, @entity)))
         end
       end # Object
 
@@ -72,6 +71,12 @@ module Mom
         else
           EMPTY_ARRAY
         end
+      end
+
+      def constraints
+        definition.constraints.map { |name, options|
+          environment.constraint(name, options)
+        }
       end
 
     end # Builder

@@ -45,6 +45,13 @@ describe 'entity mapping' do
         map :phone, :String
       end
 
+      entity :signup do
+        map :password
+        map :password_confirmation
+
+        check :EqualValue, names: [:password, :password_confirmation]
+      end
+
       entity :car do
         embed 4, :wheels do
           map :diameter
@@ -202,6 +209,27 @@ describe 'entity mapping' do
 
     invalid_hash = {
       'wheels' => 3.times.map { |i| { 'diameter'  => 20 } },
+    }
+
+    expect {
+      mapper.load(invalid_hash)
+    }.to raise_error(Morpher::Executor::Hybrid::TransformError)
+
+    # Test entity check constraints
+
+    mapper = mom.mapper(:signup, entities)
+
+    hash = {
+      'password'              => '123',
+      'password_confirmation' => '123'
+    }
+
+    # Expect it to roundtrip
+    expect(mapper.dump(mapper.load(hash))).to eql(hash)
+
+    invalid_hash = {
+      'password'              => '123',
+      'password_confirmation' => '456'
     }
 
     expect {

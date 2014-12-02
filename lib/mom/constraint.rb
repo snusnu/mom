@@ -32,6 +32,13 @@ module Mom
       add(:PIntegerArray) { |opts|
         parse_array(:parse_int, opts.fetch(:base, 10))
       }
+
+      add(:EqualValue) { |opts|
+        s(:guard,
+          s(:and, *opts.fetch(:names).combination(2).map { |left, right|
+            s(:eql, s(:key_fetch, left), s(:key_fetch, right))
+          }))
+      }
     }
 
     def self.empty
