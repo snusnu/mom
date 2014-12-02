@@ -51,8 +51,6 @@ module Mom
     class Entity
       include Concord.new(:entity_name, :default_options, :attributes)
 
-      POSITIVE_INFINITY = 1.0 / 0
-
       def self.call(entity_name, options, &block)
         instance = new(entity_name, options, {})
         instance.instance_eval(&block) if block
@@ -87,7 +85,7 @@ module Mom
       end
 
       def n
-        POSITIVE_INFINITY
+        Float::INFINITY
       end
 
     end # Entity

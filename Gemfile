@@ -12,7 +12,7 @@ MASTER = 'master'.freeze
 gemspec
 
 gem 'anima',      git: "#{MBJ}/anima.git",       branch: MASTER
-gem 'morpher',    git: "#{SNUSNU}/morpher.git",  branch: 'hybrid'
+gem 'morpher',    git: "#{SNUSNU}/morpher.git",  branch: 'mom'
 gem 'lupo',       git: "#{SNUSNU}/lupo.git",     branch: MASTER
 gem 'procto',     git: "#{SNUSNU}/procto.git",   branch: MASTER
 

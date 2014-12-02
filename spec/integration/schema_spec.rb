@@ -45,12 +45,18 @@ describe 'entity mapping' do
         map :phone, :String
       end
 
+      entity :car do
+        embed 4, :wheels do
+          map :diameter
+        end
+      end
+
       entity :task do
         map :name,          :String
         map :description,   :OString
         map :collaborators, :PIntegerArray
 
-        embed n, :labels do
+        embed 0..2, :labels do
           map :name,  :String
           map :color, :String
         end
@@ -68,14 +74,14 @@ describe 'entity mapping' do
           map :password, :String
         end
 
-        embed n, :assigned_tasks, entity: :task, from: :tasks
+        embed 0..3, :assigned_tasks, entity: :task, from: :tasks
 
-        embed n, :addresses, from: :residences do
+        embed 1..3, :addresses, from: :residences do
           map :street,  :String
           map :city,    :String
           map :country, :String
 
-          embed n, :tags, from: :categories do
+          embed 0..5, :tags, from: :categories do
             map :name, :String
           end
         end
@@ -173,6 +179,34 @@ describe 'entity mapping' do
 
     # Expect it to roundtrip
     expect(mapper.dump(mapper.load(hash))).to eql(hash)
+
+    # Test behavior when number of labels is out of the supported range
+
+    invalid_hash = {
+      'name'          => 'test',
+      'description'   => nil,
+      'labels'        => 3.times.map { |i| {
+        'name'  => "feature #{i}",
+        'color' => "color #{i}"
+      }},
+      'collaborators' => [ '1' ]
+    }
+
+    expect {
+      mapper.load(invalid_hash)
+    }.to raise_error(Morpher::Executor::Hybrid::TransformError)
+
+    # Test behavior when nr of wheels is not exactly what's expected
+
+    mapper = mom.mapper(:car, entities)
+
+    invalid_hash = {
+      'wheels' => 3.times.map { |i| { 'diameter'  => 20 } },
+    }
+
+    expect {
+      mapper.load(invalid_hash)
+    }.to raise_error(Morpher::Executor::Hybrid::TransformError)
 
     # Create a bidirectional mapper for :person data
 
