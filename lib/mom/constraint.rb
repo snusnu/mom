@@ -36,7 +36,7 @@ module Mom
       add(:EqualValue) { |opts|
         s(:guard,
           s(:and, *opts.fetch(:names).combination(2).map { |left, right|
-            s(:eql, s(:key_fetch, left), s(:key_fetch, right))
+            eql(fetch_key(left), fetch_key(right))
           }))
       }
     }
@@ -84,7 +84,33 @@ module Mom
       end
 
       def enum(*values)
-        s(:guard, s(:or, *values.map { |v| s(:eql, s(:input), s(:static, v)) }))
+        s(:guard, s(:or, *values.map { |v| eql(input, val(v)) }))
+      end
+
+      def fetch_key(name)
+        s(:key_fetch, name)
+      end
+
+      %w[eql gt gte lt lte].each do |name|
+        define_method name do |left, right|
+          s(name, left, right)
+        end
+      end
+
+      def neq(left, right)
+        s(:not, eql(left, right))
+      end
+
+      def val(v)
+        s(:static, v)
+      end
+
+      def attr(name)
+        s(:attribute, name)
+      end
+
+      def input
+        s(:input)
       end
     end # Context
   end # Constraint
