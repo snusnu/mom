@@ -108,9 +108,7 @@ module Mom
     end # Entity
 
     class Constraint
-      include Concord.new(:registry)
-
-      public :registry
+      include Concord::Public.new(:registry)
 
       def self.call(registry = {}, &block)
         instance = new(registry)
