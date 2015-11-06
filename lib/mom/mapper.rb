@@ -19,9 +19,9 @@ module Mom
 
     def self.build(definition, environment, entities)
       new(Morpher::Builder::Object.evaluator(
-        definition:  definition,
-        environment: environment,
-        entities:    entities
+        :definition  => definition,
+        :environment => environment,
+        :entities    => entities
       ))
     end
 

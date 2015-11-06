@@ -9,7 +9,7 @@ module Mom
         class OptionBuilder
 
           HANDLERS        = {}
-          NOOP_CONSTRAINT = { constraint: :Noop }
+          NOOP_CONSTRAINT = { :constraint => :Noop }
 
           def self.handle(&test)
             HANDLERS[self] = test
@@ -41,7 +41,7 @@ module Mom
             private
 
             def options
-              { constraint: args.first }
+              { :constraint => args.first }
             end
 
             class Configured < self
@@ -58,7 +58,7 @@ module Mom
           include Concord.new(:name, :default_options, :args)
 
           def self.call(name, default_options, args)
-            handler = HANDLERS.select { |_, test| test.call(args) }.keys.first
+            handler = HANDLERS.select { |_, test| test.call(args) }.first[0]
             raise ArgumentError.new("Invalid options: #{args}") unless handler
             handler.new(name, default_options, args).call
           end
@@ -73,8 +73,8 @@ module Mom
           def call
             default_options.
               reject { |k,_| k == :name_generator }.
-              merge!(from: from).
-              merge!(default: Undefined).
+              merge!(:from => from).
+              merge!(:default => Undefined).
               merge!(options)
           end
 

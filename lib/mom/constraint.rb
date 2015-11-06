@@ -4,7 +4,7 @@ module Mom
 
   module Constraint
 
-    BUILTIN = ->(_) {
+    BUILTIN = lambda { |_|
       use Constraint.empty
 
       add(:String)       { |opts| check(:primitive, String) }
@@ -50,7 +50,7 @@ module Mom
     end
 
     def self.build(&block)
-      ->(options) { Context.new(options).call(&block) }
+      lambda { |options| Context.new(options).call(&block) }
     end
 
     class Context

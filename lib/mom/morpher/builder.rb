@@ -12,8 +12,6 @@ module Mom
         :environment
       )
 
-      include Anima::Update
-
       abstract_method :call
 
       def self.executor(options)
@@ -26,11 +24,23 @@ module Mom
 
       class Hash < self
         def call
-          s(:block,
-            *guards,
-            *defaults,
-            s(:hash_transform, *attributes),
-            s(:block, *constraints))
+          hash_transform    = s(:hash_transform, *attributes)
+          constraints_block = s(:block, *constraints)
+
+          block = [
+            guards,
+            defaults,
+            hash_transform,
+            s(:guard, constraints_block)
+          ].flatten
+
+          #s(:block,
+          #  *guards
+          #  *defaults,
+          #  hash_transform,
+          #  s(:guard, constraints_block))
+
+          s(:block, *block)
         end
       end # Hash
 

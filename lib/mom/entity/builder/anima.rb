@@ -4,7 +4,7 @@ module Mom
   module Entity
     class Builder
 
-      register :anima, ->(definition) {
+      register :anima, lambda { |definition|
         Class.new do
           include Anima.new(*definition.attribute_names)
 

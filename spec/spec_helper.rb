@@ -17,19 +17,16 @@ if ENV['COVERAGE'] == 'true'
   end
 end
 
+require 'backports'
 require 'mom'
 
 # MUST happen after ice_nine
 # got required by substation
-require 'devtools/spec_helper'
 
 include Mom
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
-    c.syntax = :expect
-  end
-  config.mock_with :rspec do |c|
     c.syntax = :expect
   end
 end

@@ -14,7 +14,7 @@ describe 'entity mapping' do
 
     # Create a schema for defining domain data
 
-    schema = Mom.schema(key_transform: :symbolize)
+    schema = Mom.schema(:key_transform => :symbolize)
 
     schema.call do
 
@@ -33,15 +33,15 @@ describe 'entity mapping' do
       end
 
       entity :id do
-        map :id, from: 'ID'
+        map :id, :from => 'ID'
       end
 
       entity :page do
-        map :page, :PInteger, default: '1'
+        map :page, :PInteger, :default => '1'
       end
 
       entity :contact do
-        map :email, :String, from: :email_address
+        map :email, :String, :from => :email_address
         map :phone, :String
       end
 
@@ -49,7 +49,7 @@ describe 'entity mapping' do
         map :password
         map :password_confirmation
 
-        check :EqualValue, names: [:password, :password_confirmation]
+        check :EqualValue, :names => [:password, :password_confirmation]
       end
 
       entity :car do
@@ -74,21 +74,21 @@ describe 'entity mapping' do
         map :name,   :String
         map :gender, :Gender
 
-        embed 1, :contact, from: :profile
+        embed 1, :contact, :from => :profile
 
         embed 1, :account do
           map :login,    :String
           map :password, :String
         end
 
-        embed 0..3, :assigned_tasks, entity: :task, from: :tasks
+        embed 0..3, :assigned_tasks, :entity => :task, :from => :tasks
 
-        embed 1..3, :addresses, from: :residences do
+        embed 1..3, :addresses, :from => :residences do
           map :street,  :String
           map :city,    :String
           map :country, :String
 
-          embed 0..5, :tags, from: :categories do
+          embed 0..5, :tags, :from => :categories do
             map :name, :String
           end
         end
@@ -284,7 +284,7 @@ describe 'entity mapping' do
     # Test transformation error handling
 
     expect {
-      mapper.load(invalid: :data)
+      mapper.load(:invalid => :data)
     }.to raise_error(Morpher::Executor::Hybrid::TransformError)
   end
 end

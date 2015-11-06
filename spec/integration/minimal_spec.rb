@@ -21,7 +21,7 @@ entities = mom.entities(:anima)
 mappers  = mom.mappers(entities)
 
 mapper = mappers[:user]
-hash   = {id: 1, name: 'snusnu', tasks: [{id: 1, title: 'doit'}]}
+hash   = {:id => 1, :name => 'snusnu', :tasks => [{:id => 1, :title => 'doit'}]}
 
 user_obj  = mapper.load(hash)
 user_hash = mapper.dump(user_obj)

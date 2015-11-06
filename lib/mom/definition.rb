@@ -12,10 +12,10 @@ module Mom
     ].freeze
 
     DEFAULT_OPTIONS = {
-      guard:          Hash,
-      key_transform: :neutral,
-      name_generator: ->(entity_name, attribute_name) { attribute_name },
-      constraints:    Set.new
+      :guard          => Hash,
+      :key_transform  => :neutral,
+      :name_generator => lambda { |entity_name, attribute_name| attribute_name },
+      :constraints    => Set.new
     }.freeze
 
     include Anima.new(*ATTRIBUTES)
@@ -28,9 +28,9 @@ module Mom
         :entity_name, :default_options
       )
 
-      opts = { prefix: prefix }.merge(default_options)
+      opts = { :prefix => prefix }.merge(default_options)
 
-      DSL::Entity.call(options.merge(default_options: opts), &block)
+      DSL::Entity.call(options.merge(:default_options => opts), &block)
     end
 
     attr_reader :definitions

@@ -41,10 +41,10 @@ module Mom
         DSL.fail_if_already_registered(name, definitions)
 
         definition = Definition.build(
-          entity_name:     name,
-          default_options: default_options.merge(options),
-          header:          {},
-          constraints:     {},
+          :entity_name     => name,
+          :default_options => default_options.merge(options),
+          :header          => {},
+          :constraints     => {},
           &block
         )
 
@@ -73,12 +73,12 @@ module Mom
         fail_if_already_registered(name)
 
         header[name] = Definition::Attribute::Entity.build(
-          cardinality:        cardinality,
-          name:               name,
-          parent_entity_name: entity_name,
-          default_options:    default_options,
-          options:            options,
-          block:              block
+          :cardinality        => cardinality,
+          :name               => name,
+          :parent_entity_name => entity_name,
+          :default_options    => default_options,
+          :options            => options,
+          :block              => block
         )
       end
 
@@ -88,10 +88,10 @@ module Mom
 
       def definition
         Definition.new(
-          entity_name:     entity_name,
-          default_options: default_options,
-          header:          Registry.new(header),
-          constraints:     Registry.new(constraints)
+          :entity_name     => entity_name,
+          :default_options => default_options,
+          :header          => Registry.new(header),
+          :constraints     => Registry.new(constraints)
         )
       end
 

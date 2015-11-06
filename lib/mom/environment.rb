@@ -15,8 +15,8 @@ module Mom
     def hash_transformers
       registry { |definition|
         Morpher::Builder::Hash.executor(
-          definition:  definition,
-          environment: self
+          :definition  => definition,
+          :environment => self
         )
       }
     end
@@ -24,9 +24,9 @@ module Mom
     def object_mappers(entities)
       registry { |definition|
         Morpher::Builder::Object.executor(
-          definition:  definition,
-          environment: self,
-          entities:    entities
+          :definition  => definition,
+          :environment => self,
+          :entities    => entities
         )
       }
     end

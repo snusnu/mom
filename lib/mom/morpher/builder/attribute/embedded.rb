@@ -92,7 +92,7 @@ module Mom
           private
 
           def node
-            builder.update(definition: @definition).call
+            builder.with(:definition => @definition).call
           end
         end # Entity
       end # Attribute

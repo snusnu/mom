@@ -42,9 +42,9 @@ module Mom
 
         def local_options
           {
-            cardinality: cardinality,
-            entity:      entity_name,
-            prefix:      local_entity_name
+            :cardinality => cardinality,
+            :entity      => entity_name,
+            :prefix      => local_entity_name
           }
         end
 
@@ -76,10 +76,10 @@ module Mom
 
           if anonymous?
             @definition = Definition.build(
-              entity_name:     entity_name,
-              default_options: options,
-              header:          {},
-              constraints:     {},
+              :entity_name     => entity_name,
+              :default_options => options,
+              :header          => {},
+              :constraints     => {},
               &block
             )
           end
